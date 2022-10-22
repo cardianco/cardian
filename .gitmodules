@@ -1,0 +1,12 @@
+[submodule "cardian/third-parties/Qt-AES"]
+	path = cardian/third-parties/Qt-AES
+	url = https://github.com/bricke/Qt-AES
+[submodule "cardian/third-parties/qomponent"]
+	path = cardian/third-parties/qomponent
+	url = https://github.com/SMR76/qomponent
+[submodule "extra/icon-font/icon-manager"]
+	path = extra/icon-font/icon-manager
+	url = https://github.com/SMR76/icon-manager.git
+[submodule "cardian/third-parties/hive"]
+	path = cardian/third-parties/hive
+	url = https://github.com/SMR76/hive.git

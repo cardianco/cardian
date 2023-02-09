@@ -1,0 +1,920 @@
+% !TeX spellcheck = fa
+\documentclass[a4paper,12pt]{report}
+
+\usepackage{color}
+\usepackage{float}
+\usepackage{babel}
+\usepackage{fourier}
+\usepackage{amsmath}
+%% \usepackage{dirtree} %to show tree view directories.
+\usepackage{caption}
+\usepackage{nomencl}
+\usepackage{verbatim}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{outlines}
+\usepackage{enumitem}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{makecell}
+\usepackage{tabularx} % for custom width table
+\usepackage{subcaption}
+\usepackage{datenumber}
+\usepackage{indentfirst}
+\usepackage{lstautogobble}
+\usepackage[table]{xcolor}
+\usepackage[utf8] {inputenc}
+\usepackage[space]{grffile}
+\usepackage[final]{pdfpages}
+\usepackage[datesep=.,calc,showdow]{datetime2}
+\usepackage{accsupp}
+
+%% \usepackage[perpage]{footmisc}
+\usepackage[breakable]{tcolorbox}
+\tcbuselibrary{breakable, skins}
+\usepackage[Bjornstrup]{fncychap}
+%Options: Sonny, Lenny, Glenn, Conny, Rejne, Bjarne, Bjornstrup
+\usepackage[colorlinks,linkcolor=blue,citecolor=red,urlcolor=blue]{hyperref}
+
+%% \usepackage[style=long,toc,xindy]{glossaries}
+%% \usepackage[symbols,nogroupskip,sort=standard]{glossaries-extra}
+
+\usepackage[fontsize={12,18}]{xepersian}
+
+\DTMsetup{useregional}
+% -------------- tcolorbox -------------
+\tcbset{
+	enhanced,
+	colback=cyan!5!white,
+	boxrule=0.1pt,
+	colframe=cyan!75!black,
+	fonttitle=\bfseries,
+	width=0.9\linewidth
+}
+
+% ------------- font setup -------------
+% ------------- xepersian --------------
+%% \settextfont{Microsoft Sans Serif}
+\settextfont		[ExternalLocation=fonts/]{Yas}
+\setlatintextfont	[ExternalLocation=fonts/]{Times New Roman}
+\setmathdigitfont	[ExternalLocation=fonts/]{Yas}
+
+\defpersianfont\XBT	[Scale=1.1,ExternalLocation=fonts/]{XB Titre}
+\deflatinfont\FS	[Scale=16,ExternalLocation=fonts/]{Far.Symbol8}
+\deflatinfont\TNR	[Scale=1,ExternalLocation=fonts/]{Times New Roman}
+
+% --------------   xcolor  -------------
+\definecolor{ao}{rgb}			{0.00, 0.50, 0.00}
+\definecolor{codeGreen}{rgb}	{0.00, 0.50, 0.50}
+\definecolor{lavendergray}{rgb}	{0.87, 0.86, 0.92}
+\definecolor{mint}{rgb}			{0.24, 0.71, 0.54}
+\definecolor{aliceblue}{rgb}	{0.94, 0.97, 1.00}
+\definecolor{commentGreen}{rgb}	{0.13, 0.65, 0.47}
+\definecolor{steelBlue}{rgb}	{0.00, 0.00, 0.50}
+\definecolor{stringGreen}{rgb}	{0.00, 0.50, 0.00}
+\definecolor{rowBlue}{rgb}		{0.48, 0.81, 0.87}
+
+% ---------  page header setup ---------
+% --------------  fancyhdr -------------
+\pagestyle{fancy}
+
+\cfoot{\thepage}
+\rhead{\thepage }
+\renewcommand{\headrulewidth}{0.4pt}
+
+%% new commands.
+\newcommand{\lrm}[1]{\textcolor{steelBlue}{\lr{\texttt{#1}}}}
+\newcommand{\qt}[1]{''#1``}
+\newcommand{\LTRqt}[1]{``#1''}
+
+%% tabular borders color
+\arrayrulecolor{gray}
+
+\renewcommand{\bibname}{مراجع}
+% \newglossaryentry{dot-product}{name={dot product},description={aaa}}
+% \makeglossaries
+\makenomenclature
+\renewcommand{\nomname}{فهرست علائم}
+\nomenclature{$\bullet$}{bullet}
+
+%% ugly chapter style for chapters :D
+% --------- chapter renew command -------------
+\newcommand{\opchapter}[1]{\newpage%
+	\topskip0pt%
+	\vspace*{\fill}%
+	\addtocounter{chapter}{1}%
+	\begin{center}%
+		\textbf{\huge{\color{gray}{فصل \thechapter \\[1cm] \uppercase{#1}}}}%
+	\end{center}%
+	\vspace*{\fill}%
+	\newpage%
+	\textbf{\Large{\thechapter. #1}}%
+	\addcontentsline{toc}{chapter}{#1}%
+}
+
+\geometry{
+	a4paper,
+	top		= 35mm,
+	right	= 35mm,
+	bottom	= 25mm,
+	left	= 25mm,
+}
+
+\newcommand{\AlterText}{%
+	\BeginAccSupp{method=pdfstringdef,unicode,ActualText={y}}%
+	x%
+	\EndAccSupp{}%
+}
+
+
+\begin{document}
+	\lstset{
+		frame		=	tb,
+		basicstyle	=	\color{steelBlue}\linespread{0.8}\ttfamily,
+		columns		=	fullflexible,
+		keepspaces	=	false,
+		tabsize		=	3,
+		autogobble		,
+		breaklines	=	true,
+		breakatwhitespace=true,
+		stringstyle	=	\color{stringGreen},
+		commentstyle=	\color{gray},
+		keywordstyle=	\color{purple},
+		language	=	c++,
+		aboveskip	=	3mm,
+		belowskip	=	3mm,
+		showstringspaces=false,
+		columns		=	flexible,
+		captionpos	=	b,
+		numbers		=	left,
+		numbersep	=	5pt,
+		numberstyle	=	\color{gray}\linespread{0.8}\ttfamily,
+		postbreak	=	\mbox{\textcolor{blue}{$\hookrightarrow$}\space}
+	}
+
+	\thispagestyle{empty}
+	\begin{center}
+		{
+			\qquad\FS 3
+		}
+	\end{center}
+	\vspace*{10cm}\newpage\thispagestyle{empty}\vspace*{10cm}\newpage
+
+	\title{
+		\includegraphics[width=0.5\textwidth]{resources/quct-logo.pdf}\\[8ex]
+		\XBT
+			سیستم دزدگیر خودرو \\
+            \lr{Cardian}
+	}
+	\author{
+		\XBT
+		سیّد مرتضیٰ رضوی\\
+		\XBT
+		دکتر صادقی زاده
+	}
+	\date{
+		\XBT
+		\today
+	}
+
+	\pagenumbering{roman}
+	\maketitle
+	\setcounter{page}{1}
+	\tableofcontents
+	%\printnomenclature
+	\listoffigures
+	%\listoftables
+
+	\newpage
+	\pagenumbering{arabic}
+
+	\opchapter{
+	معرفی
+	}\label{chap1}
+
+	\section{
+	شرح کلی پروژه
+	}\label{sec1:chap1}
+	این پروژه در حول پیاده سازی یک سیستم هشدار خودرو یا در اصطلاح دزدگیر خودرو است.
+
+	پروژه شامل دو بخش پیاده سازی سخت‌افزاری دزدگیر و هستهٔ اصلی و پیاده سازی بخش نرم‌افزاری به صورت
+	\lr{android application}
+	به منظور کنترل بهتر بخش سخت‌افزاری در نظر گرفته شده‌است.
+
+	معمولاً این نوع دستگاه‌ها به منظور فقط کاربرد هشدار دادن استفاده می‌شود، اما از طرفی سهولت استفاده از خودرو نیز مد نظر طراحان این نوع دستگاه قرار دارد.
+
+	دزدگیر‌های خودرو به نوعی از عصر ورود ماشین‌ها به بازار آمدند، یک دزدگیر در دو نوع کارخانه و پس از فروش بر روی خودرو متصل می‌شوند.
+
+	در حالت کارخانه عموماً امکانات ساده‌ای مانند هشدار در صورت ضربه و بازکردن درها قرار دارد.
+
+	در نوع دیگر که به صورت جدا و معمولاً به صورت محصول شرکتی مستقل بر روی ماشین متصل می‌شود که امکانات بسیار بیشتری نسبت به انواع کارخانه‌ای دزدگیر دارد.
+
+	این پروژه شامل بخش زیادی از پیاده سازی این امکانات در کنار استفاده از تراشه‌های ارزان قیمت در محصول نهایی است.
+
+	که می‌توان به امکان مکان‌یابی و مشاهدهٔ وضعیت خودرو از طریق
+	\lr{application}
+	به کاربر نیز اشاره کرد.
+
+
+	\section{
+	اهداف
+	}\label{sec2:chap1}
+	امروزه دزدگیر خودرو به یک استاندارد و یک وسیله مورد نیاز هر خودرو شخصی بدل شده‌است،
+	از طرفی طی چند سال عملکرد‌های دزدگیر خودرو بهبود یافته‌است،‌ تا حدی که در ارسال دستورات
+\lr{remote}
+	از رمزنگاری و روش‌های پنهان سازی دستورات برای جلوگیری از دزدی و حملات مخرب صورت گرفته است.
+	اهداف این پروژه، به طور خلاصه و کلی شامل:
+	\begin{itemize}[nosep]
+		\item
+		پیاده سازی هرچه ارزانتر محصول نهایی، که منوت به استفاده تراشه‌های ارزان قیمت در محصول می شود.
+		\item
+		ایجاد یک روش و رمزنگاری مناسب سیگنال ارسالی به وسیله
+		\lr{remote}.
+		\item
+		کنترل حدالامکان خودرو با استفاده از
+		\lr{application}.
+		\item
+		و همچنین استفاده از زبان
+		\lr{C/C++}
+		به منظور
+		\lr{performance}
+		بالا و کارکرد اجرایی.
+	\end{itemize}
+
+		در انتها هدف این پروژه پیاده سازی این دزدگیر با بهترین شرایط کنترل خودرو و ایجاد یک رمزنگاری بهبودیافته نسبت به مابقی سیستم‌ها است، که از طرفی امکان کنترل مناسب خودرو به نسبت دیگر محصولات با قیمت هم سطح را فراهم کند.
+	\section{
+	پروژه‌های مشابه موجود
+	}\label{sec3:chap1}
+	از طرفی که یک دزدگیر خودرو به محصولی پر استفاده از زمان پیدایش خودرو مبدل شده است، در نتیجه محصولات زیادی با ويژگی‌های مختلف در این باره معرفی شده‌اند. که در این بخش به معرفی چندی از محصولات پرفروش و پرطرفدار می‌پردازیم.
+	\subsection{
+		\lr{Viper 5906V}
+	}\label{subsec1:sec3:chap1}
+	این دزدگیر محصول کمپانی
+	\lr{Directed Electronics}
+	است که با قیمت معادل با
+	$430.00\$$
+	در فروشگاه
+	\lr{amazon}
+		به فروش می‌رسد.
+	دزدگیر مذکور، دارای دو کنترل از راه دور و همراه با یک
+	\lr{moblie appliaction}
+	جامع، مربوط به محصولات شرکت
+	\lr{erer}
+		که امکان اتصال و گزارش موقعیت لحظه‌ای خودرو را دارد، این
+	\lr{application}
+	به منظور تنظیم و کنترل راحت‌تر دزدگیر به وسیله تلفن همراه هوشمند تعبیه شده است.
+	\cite{viperCar35:online}
+	\begin{figure}[!h]
+		\centering
+		\footnotesize
+		\begin{subfigure}[t]{0.3\linewidth}
+			\centering
+			\includegraphics[width=0.8\textwidth]{resources/viper_5906V_1.jpg}
+			\caption{
+				دستگاه
+				\lr{remote control}
+				به‌همراه جعبه.
+			}
+			\label{subfig1:fig1:sec3:chap1}
+		\end{subfigure}
+		\hspace*{1cm}
+		\begin{subfigure}[t]{0.3\linewidth}
+			\centering
+			\includegraphics[width=0.8\textwidth]{resources/viper_5906V_2.jpg}
+			\caption{
+				دستگاه 	به صورت
+				\lr{unbox}
+				شده، شامل ماژول‌ها
+			}
+			\label{subfig2:fig1:sec3:chap1}
+		\end{subfigure}
+		\\\vspace*{5mm}%% ----------------------------------------------------------------------
+		\begin{subfigure}[t]{0.3\linewidth}
+			\centering
+			\includegraphics[width=0.8\textwidth]{resources/viper_smart_start_1.jpg}
+			\caption{
+				صفحه نمایش موقعیت مکانی خودرو.
+			}
+			\label{subfig3:fig1:sec3:chap1}
+		\end{subfigure}
+		\hspace*{1cm}
+		\begin{subfigure}[t]{0.3\linewidth}
+			\centering
+			\includegraphics[width=0.8\textwidth]{resources/viper_smart_start_2.jpg}
+			\caption{
+				صفحه مربوط به تنظیمات هشدار با توجه به موقعیت مکانی.
+			}
+			\label{subfig4:fig1:sec3:chap1}
+		\end{subfigure}
+		\normalsize
+		\caption{
+			عکس از جزئیات دزدگیر
+			\lr{Viper 5906V}
+			موجود در فروشگاه
+			\hyperref{https://www.amazon.com/Viper-5906V-Color-Remote-Security/dp/B00H0874IG}{car alarm unboxed}{Viper 5906V}{\lr{amazon}}
+		}
+		\label{fig1:sec3:chap1}
+	\end{figure}
+
+	\lr{smart start}
+	برنامه تلفن هوشمند ارائه شده توسط کمپانی
+	\lr{viper}
+	موجود در
+	\hyperref{https://play.google.com/store/apps/details?id=com.directed.android.viper}{car alarm application}{Viper 5906V}{فروشگاه \lr{play}}
+	که در
+	\hyperref[fig1:sec3:chap1]{شکل 1.1}
+	 در شکل‌های
+	\hyperref[subfig3:fig1:sec3:chap1]{(ج)}
+	و
+	\hyperref[subfig3:fig1:sec3:chap1]{(د)}
+	قابل مشاهده هستند.
+
+	\subsubsection{
+		امکانات
+	}\label{subsubsec1:subsec1:sec3:chap1}
+	\begin{itemize}[nosep]\label{item1:subsec1:sec3:chap1}
+		\item
+			محافظت از سرقت خودرو (مانند ایجاد هشدار و..).
+		\item
+			\lr{remote}
+			 دوطرفه.
+		\item
+			رمزنگاری.
+		\item
+			روشن کردن خودرو به صورت
+			\lr{remote}.
+		\item
+			داشتن نمایشگر
+			\lr{OLED}
+			در
+			\lr{remote}.
+		\item
+			کنترل دمای داخلی خودرو.
+		\item
+			قفل درها به صورت اتوماتیک.
+		\item
+			برد
+			\lr{remote}
+				تا
+			$1.5 km$
+		\item
+			ردیابی خودرو.
+		\item
+			استفاده از
+			\lr{SST}\LTRfootnote{Spread Spectrum Technology.}
+			برای ارتباط رادیویی.
+		\item
+			قابلیت اتصال به نرم‌افزار موبایل.
+	\end{itemize}
+
+	\subsection{
+		\lr{Python 5760P}
+	}\label{subsec2:sec3:chap1}
+
+	دزدگیر
+	\lr{Python 5760P}
+	یکی دیگر از انواع
+	\lr{remote}
+	و  ساخته شده توسط کمپانی
+	\lr{Directed Electronics}
+	این دزدگیر هم مانند
+	\lr{Viper 5906V}
+	از امکانات مشابهی برخوردار است، که می‌توان مانند یک نسخه ارزان‌تر از محصول
+	\lr{viper}
+	دانست. این سیستم هشدار در سایت
+	\lr{amazon}
+		به قیمت
+	$399.95\$$
+	به فروش میرسد. از جمله دلایل قیمت پایین‌تر می‌توان به عدم وجود
+	\lr{OLED}
+	رنگی برای نمایش اطلاعات اشاره کرد.
+	\cite{pythonHo3:online}
+
+	\begin{figure}[!h]
+		\begin{center}
+			\includegraphics[width=0.4\textwidth]{resources/Python_5760P.jpg}
+			\caption{
+			ریموت
+			\lr{Python 5760P}}
+			\label{fig1:subsec2:sec3:chap1}
+		\end{center}
+	\end{figure}
+	\subsubsection{
+		امکانات
+	}\label{subsubsec1:subsec2:sec3:chap1}
+	\begin{itemize}[nosep]\label{item1:subsec2:sec3:chap1}
+		\item
+		محافظت از سرقت خودرو (مانند ایجاد هشدار و..).
+		\item
+		رمزنگاری.
+		\item
+		قابلیت شخصی سازی حسگر‌ها.
+		\item
+		ردیابی خودرو.
+		\item
+		برد
+		\lr{remote}
+		تا
+		$1.5 km$
+		\item
+		استفاده از
+		\lr{SST}
+		برای ارتباط رادیویی.
+		\item
+		قابلیت اتصال به نرم‌افزار موبایل، مشابه با
+		\lr{Viper 5906V}
+		از نرم‌افزار
+		\lr{smart start}
+		استفاده می‌کند که قبلاً معرفی شده.
+	\end{itemize}
+
+	\subsection{
+		\lr{Avital 3100LX}
+	}\label{subsec3:sec3:chap1}
+	دستگاه
+	\lr{carlock}
+	یک دزدگیر و تحلیل‌گر خودرو است که به صورت یک
+	\lr{gadget}
+	به درگاه
+	\lr{OBD}
+	خودرو متصل می‌شود.
+	این محصول به قیمت
+	$49.95\$$
+	فروشگاه
+	\hyperref{https://www.amazon.com/gp/product/B00U0K3Q10}{car alarm}{carlock}{\lr{amazon}}
+	به فروش می‌رسد.
+
+	این دستگاه به صورت اینترنتی و پیامکی با تلفن ‌همراه ارتباط برقرار می‌کند که این خدمات باید به صورت جداگانه و سالانه با قیمت
+	$120\$$
+	خریداری شود، که یک ماه استفاده اولیه رایگان است.
+
+	همچنین این محصول دارای
+	tag
+	هایی برای باز شدن قفل خودرو در صورت ورود به محدوده خودرو است.
+
+	که این
+	tag
+	ها نیز به صورت جداگانه در فروشگاه
+	\hyperref{https://www.amazon.com/CARLOCK-TAG-Accessory-ONLY-Automatically/dp/B075F4SWZ7}{car alarm}{carlocktag}{\lr{amazon}}
+	به قیمت
+	$19.90\$$
+	به فروش می‌رسند.
+	\cite{carAlarm:online}
+
+	\hyperref[subfig2:fig2:subsec3:sec3:chap1]{
+	شکل
+	۱.۳}
+	\begin{figure}[!h]
+		\centering
+		\footnotesize
+		\begin{subfigure}[t]{0.3\linewidth}
+			\centering
+			\includegraphics[width=0.8\textwidth]{resources/carlock-main-module.jpeg}
+			\caption{
+				ماژول اصلی
+				carlock.
+			}
+			\label{subfig1:fig1:subsec3:sec3:chap1}
+		\end{subfigure}
+		\hspace*{1cm}
+		\begin{subfigure}[t]{0.3\linewidth}
+			\centering
+			\includegraphics[width=0.8\textwidth]{resources/carlock-tag.jpeg}
+			\caption{
+				\lr{carlock tag}
+			برای باز شدن خودکار خودرو.
+			}
+			\label{subfig2:fig1:subsec3:sec3:chap1}
+		\end{subfigure}\\
+		\begin{subfigure}[t]{0.8\linewidth}
+			\centering
+			\includegraphics[width=0.93\textwidth]{resources/carlock-tag-functionality.jpg}
+			\caption{
+				نحوهٔ عملکرد
+				\lr{carlock tag}
+				به صورت مصور.
+			}
+			\label{subfig1:fig2:subsec3:sec3:chap1}
+		\end{subfigure}\\\vspace*{5mm}
+
+		\begin{subfigure}[t]{0.8\linewidth}
+			\centering
+			\includegraphics[width=0.3\textwidth]{resources/carlock-app-ui-1.jpeg}
+			\includegraphics[width=0.3\textwidth]{resources/carlock-app-ui-2.jpeg}
+			\includegraphics[width=0.3\textwidth]{resources/carlock-app-ui-3.jpeg}
+			\caption{
+				نمایی از صفحات نرم‌افزار
+				\lr{carlock}
+				موجود در فروشگاه
+				\lr{play}.
+			}
+			\label{subfig2:fig2:subsec3:sec3:chap1}
+		\end{subfigure}
+		\normalsize
+		\caption{
+			عکس‌ها و نمایه‌هایی
+			\lr{application}
+			مربوط به
+			\lr{carlock}
+			و ماژول‌های آن.
+		}
+		\label{fig2:subsec3:sec3:chap1}
+	\end{figure}
+	\subsubsection{
+		امکانات
+	}\label{subsubsec3:subsec3:sec3:chap1}
+	\begin{itemize}[nosep]\label{item1:subsec3:sec2:chap1}
+		\item
+			ردیابی خودرو.
+		\item
+			گزارش وضعیت باتری.
+		\item
+			گزارش در صورت شوک و ضربه به خودرو.
+		\item
+			گزارش سرعت خودرو.
+		\item
+			قفل، و باز کردن در‌های خودرو.
+		\item
+			راه‌اندازی بسیار آسان با اتصال به پورت
+			\lr{OBD}\LTRfootnote{On-board diagnostics}.
+		\item
+			گزارش لحظه‌ای از موقعیت خودرو در صورت سرقت.
+
+	\end{itemize}
+
+	\section{
+	امکانات نهایی پروژه
+	}\label{sec4:chap1}
+	\begin{itemize}[nosep]\label{item1:sec4:chap1}
+		\item
+			ردیابی خودرو.
+		\item
+			کنترل برخی از عملکرد‌های خودرو.
+
+			این بخش شامل عملکرد‌هایی که
+			\lr{ECU}\LTRfootnote{engine control unit \TNR/endʒɪn kənˈtrəʊl ˈjuːnɪt/.}
+			در اختیار قرار می‌دهد می‌باشد،‌ مانند جلوگیری از روشن شدن خودرو، یا خاموش کردن خودرو در صورت نیاز و تایید کاربر.
+		\item
+			گزارش وضعیت خودرو.
+		\item
+			کنترل ماژول اصلی به وسیله
+			\lr{remote controller}.
+
+			که شامل روشن‌کردن موقت ماشین، بازکردن درها و شیشه‌ها، هشدار اعلان ماشین و ... می‌باشد.
+		\item
+			اعمال پیشگیری از سرقت خودرو (مانند به صدا در آمدن هشدار و...)، که شامل امکانات ابتدایی در دزدگیر است.
+		\item
+			رمزنگاری ارتباط رادیویی و
+			\lr{blutooth}.
+
+			در این قسمت سعی می‌شود بهینه سازی‌هایی در ارسال دستورات
+			\lr{remote}
+			 از طریق ماژول رادیویی انجام داد.
+	\end{itemize}
+	\newpage
+	\section{
+		تکنولوژی‌های مورد استفاده
+	}\label{sec5:chap1}
+
+	\begin{enumerate}[nosep]\label{item1:sec5:chap1}
+		\item
+			\hyperref[subsec1:sec5:chap1]{\lr{Qt/C++}}
+		\item
+			\hyperref[subsec2:sec5:chap1]{\lr{QML}}
+		\item
+			\hyperref[subsec3:sec5:chap1]{\lr{ARM}}
+	\end{enumerate}
+
+	\subsection{\lr{Qt/C++}}\label{subsec1:sec5:chap1}
+		فریم‌ورک
+		\LTRfootnote{ freamwork\TNR /ˈfrāmˌwərk/.}
+		محبوب
+		\lr{Qt}\LTRfootnote{ Qt\TNR /kyo͞ot/.}
+		که یکی از فریم‌ورک‌های زبان برنامه‌نویسی
+		\lr{C++}
+		است، و در این پروژه به منظور پیاده سازی
+		\lr{android application}
+		از آن استفاده می شود.
+
+		فریم‌ورک
+		\lr{Qt}
+		به واسطه زبان قدرتمند
+		\lr{C++}
+		توانایی ایجاد
+		\lr{source code}
+		قابل حمل و چند سکویی
+
+		را دارد.
+		از طرفی این فریم‌ورک به خوبی می‌تواند با ترکیب
+		\lr{QML}
+		به عنوان زبان طراحی رابط کاربری و
+		\lr{C++}
+		برای سمت پردازش نرم‌افزار یک خروجی مناسب با رابط کاربری قابل پسند و کارایی مناسب ایجاد کند.
+	\subsection{QML}\label{subsec2:sec5:chap1}
+	زبان
+	\lr{QML}
+	که از طرف شرکت
+	\lr{Qt}
+	به عنوان یک زبان مفسری با قابلیت استفاده از
+	\lr{JS}\LTRfootnote{ Java Script\TNR\ /ˈjävəskript/.}،
+	\lr{HTML}\LTRfootnote{ Hypertext Markup Language\TNR\ /ˈhīpərˌtekst ˈmärˌkəp ˈlaNGɡwij/.}
+	و
+	\lr{CSS}\LTRfootnote{ Cascading Style Sheet\TNR\ /kaˈskād stīl SHēt/.}
+	در کد می‌توان به راحتی و با استفاده از این زبان یک رابط کاربری مناسب و زیبا ایجاد کرد.
+	\cite{QtQML51548:online}
+	\subsection{ARM}\label{subsec3:sec5:chap1}
+	\lr{ARM}\LTRfootnote{Acorn RISC Machine\TNR\ /ˈeɪˌkɔrn ˈrɪsk məˈʃiːn/ }
+	یک پردازنده کامپیوتری از خانواده
+	\lr{RISC}\LTRfootnote{Reduced Instruction Set Computing\TNR\ /rɪˈdjuːst ɪnˈstrʌkʃn̩ set kəmˈpjuːtɪŋ/.}
+	است. که توسط کمپانی
+	\lr{ARM}
+	در حال توسعه است.
+	این کمپانی اجازه ساخت و استفاده از این تکنولوژی را به کامپانی‌های دیگر نیز داده‌است،‌ محصولات خود از جمله سیستم‌های مبتنی بر چیپ‌ها
+	(\lr{SoC}\LTRfootnote{System on Chips\TNR\ /ˈsɪstəm ˈɒn tʃɪps/.})
+	و سیستم‌های مبتنی بر ماژول‌ها
+	(\lr{SoM}\LTRfootnote{System on Modules\TNR\ /ˈsɪstəm ˈɒn ˈmɒdjuːlz/.})
+	را پیاده سازی کنند. که از لحاظ مصرف انرژی، هزینه و اتلاف گرما کاملاً به صرفه است.
+
+	همچنین این کمپانی هسته‌هایی را نیز طراحی می‌کند و اجازه آن را به شرکت‌هایی که نیاز به استفاده از
+	هسته‌ها و  نسخه اصلی هسته
+	(\lr{IP core\LTRfootnote{intellectual property core\TNR\ /ˌɪntəˈlektʃʊəl ˈprɒpəti kɔː/.}})
+	 در محصولات خود را دارند می‌دهد.
+
+	\subsubsection{
+		میکروکنترلر
+		\lr{STM32F103}}
+	میکروکنترلر
+	\lr{STM32F103}
+	از خانواده تراکم متوسط با عملکرد خطی، شامل پردازنده
+	\lr{ARM}
+	با عملکرد بالا از نوع هسته 32 بیت و از قشر
+	\lr{M3}
+	با فرکانس تا
+	$ 72 MHz $
+	و حافظه فوق سریع تا
+	$ 128 Kbytes $
+	دارای
+	$ 48 pin $
+	شامل دو
+	\lr{ADC}
+	$ 12-bit $
+	، سه تایمر
+	$ 16-bit $
+	و یک
+	\lr{PWM}
+	و شامل دو
+	\lr{I2C}
+	و
+	\lr{SPI}
+	با ولتاژ کاری 2 تا $ 3.7 $ ولت است.
+	\cite{ltc3600:datasheet}
+
+	دیگر ماژول‌های مورد استفاده در این پروژه شامل:
+	\begin{itemize}[nosep]\label{item2:sec5:chap1}
+		\item
+		یک ماژول
+		\lr{SIM800L}
+		برای اتصال به شبکه موبایل.
+		\item
+		و ماژول
+		\lr{GYNEO6MV2}
+		برای موقعیت یابی به وسیله
+		\lr{GPS}.
+		\item
+		به همراه چند ماژول ارتباط رادیویی و
+		\lr{blutooth}
+		برای ارتباط و کنترل از طریق دستگاه
+		\lr{remote}
+		و تلفن همراه.
+	\end{itemize}
+
+	از دلایل انتخاب میکروکنترلر
+	\lr{ARM}
+	قیمت پایین و مصرف انرژی بسیار پایین و همچنین داشتن واحد‌های پردازشی بیشتر نسبت به
+	\lr{AVR}
+	و دیگر میکروکنترلرها است.
+
+	برای طراحی مدار نیز نرم‌افزار
+	\lr{Altium Designer}
+	مد نظر قرار گرفته شده‌است که محیط مناسب برای طراحی حرفه‌ای مدار را فراهم می‌کند.
+
+
+	\opchapter{
+		تحلیل پروژه
+	}\label{chap2}
+
+	\section{
+		مقدمه
+	}\label{sec1:chap2}
+
+
+	\section{
+		متدولوژی کنبان
+	}\label{sec2:chap2}
+	\lr{kanban}
+	\footnote{کَنبان.}
+	یک روش مدیریت چرخهٔ کار برای تعریف، مدیریت و بهبود سرویس‌های انتقال دانش کار است.
+	که هدف آن کمک برای متصور سازی، افزایش بهره‌وری و بهبود متداوم کار می‌باشد.
+
+	کنبان در زبان ژاپنی به معنی
+	\emph{
+	تختهٔ بصری
+ 	}
+	 و یا
+ 	\emph{
+ 	علامت
+ 	}
+	است.
+	در ابتدا به عنوان یک سیستم برنامه‌ریزی به عنوان مدیریت ناب
+	\LTRfootnote{lean manufacturing \TNR\ /ˈli:n ˌmænjʊˈfæktʃərɪŋ/}
+	در سال
+	$1940$
+	توسط
+	\lr{Toyota}\footnote{
+		تویوتا، یک ‌شرکت خودروسازی ژاپنی تأسیس شده در سال
+		$1935$.
+	}
+	مطرح شد، که از سیستم همزمان
+	\lr{Toyota}
+	الهام گرفته شد، که بعد‌ها در سال
+	$2007$
+	به عنوان روش کنبان پدید آمد.
+	\cite{ohno1988toyota:book}
+	در متدولوژی کنبان از یک تخته کنبان استفاده می‌شود. 	در حالت ساده این تخته شامل $3$ ستون انجام دادن
+	(\lr{To-Do})،
+	در حال انجام
+	(\lr{In Progress})
+	و انجام شده
+	(\lr{Done})
+	است، که ممکن است شامل ستون‌های بانک اطلاعاتی
+	(\lr{Backlog})،
+	آماده انجام
+	(\lr{Ready})،
+	کد زنی
+	(\lr{Coding})،
+	آزمایش
+	(\lr{Testing})،
+	و تأ‌یید
+	(\lr{Approval})
+	نیز باشد.
+	\cite{kanbanize:online}
+
+	\emph{
+	کنبان برای یک
+	}\LTRfootnote{Kanban For 1.}،
+	یک روش الهام گرفته شده از کنبان مناسب برای توسعهٔ پروژه‌هایی با یک توسعه‌دهنده است.
+	\cite{prsonalkanban:online}
+	\begin{figure}[!h]
+		\begin{center}
+			\includegraphics[width=0.8\textwidth]{resources/kanban-board.pdf}
+		\end{center}
+		\caption{
+			نمونهٔ تختهٔ کنبان در پروژهٔ جاری.
+		}
+		\label{fig3:sec1:chap2}
+	\end{figure}
+
+	\section{
+		نمودار کاربرد
+	}\label{sec3:chap2}
+
+	\section{
+		نمودار فعالیت
+	}\label{sec4:chap2}
+	نمودار فعالیت شامل عملکرد کاربر و طریقه انجام مراحل و گزینه‌های موجود پیش روی است.
+	این نمودار خلاصه‌ای از عملیات‌های موجود و قابل انجام توسط دستگاه را توضیح می‌دهد.
+
+	\begin{figure}[!h]
+		\begin{center}
+			\includegraphics[width=0.8\textwidth]{../sd-diagrams/uml/activity-diagram.pdf}
+			%../Extera/SD Diagrams/UML/activity-diagram.pdf
+		\end{center}
+		\caption{
+		نمودار فعالیت.
+		}
+		\label{fig4:sec1:chap1}
+	\end{figure}
+
+	\pagebreak
+	\section{
+		نمودار مدل و نشانه‌گذاری فرایند کسب‌وکار
+	}\label{sec5:chap2}
+
+%	\subsection{
+%
+%	}\label{subsec1:sec5:chap2}
+
+	\begin{figure}[!ht]
+		\centering
+		\footnotesize
+		\begin{subfigure}[t]{0.47\linewidth}
+			\centering
+			\includegraphics[width=\textwidth]{../sd-diagrams/uml/bpmn-diagram-1.pdf}
+			\caption{
+			فعال‌سازی آژیر خودرو
+			}
+			\label{subfig1:fig5:sec5:chap2}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.47\linewidth}
+			\centering
+			\includegraphics[width=\textwidth]{../sd-diagrams/uml/bpmn-diagram-2.pdf}
+			\caption{
+				مراحل کنترل از راه‌دور  خودرو
+			}
+			\label{subfig2:fig5:sec5:chap2}
+		\end{subfigure}
+		\hspace*{1cm}
+		\normalsize
+		\label{fig5:sec5:chap2}
+		\caption{
+			نمودار
+			\lr{BPMN}
+			بخش
+			$2$
+		}
+	\end{figure}
+
+	\begin{figure}[!ht]
+		\centering
+		\footnotesize
+		\begin{subfigure}[t]{0.47\linewidth}
+			\centering
+			\includegraphics[width=\textwidth]{../sd-diagrams/uml/bpmn-diagram-3.pdf}
+			\caption{
+				قرار دادن محدودیت منطقه‌ای برای خودرو
+			}
+			\label{subfig1:fig6:sec5:chap2}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.47\linewidth}
+			\centering
+			\includegraphics[width=\textwidth]{../sd-diagrams/uml/bpmn-diagram-4.pdf}
+			\caption{
+				به‌روزرسانی برنامهٔ
+				\lr{desktop}
+			}
+			\label{subfig2:fig6:sec5:chap2}
+		\end{subfigure}
+		\hspace*{1cm}
+		\normalsize
+		\label{fig6:sec5:chap2}
+		\caption{
+			نمودار
+			\lr{BPMN}
+			بخش
+			$1$
+		}
+	\end{figure}
+%	\section{
+%		مدل روابط موجودیت‌ها
+%	}\label{sec6:chap2}
+
+%	\begin{enumerate}[nosep]\label{enum‍1:sec0:chap0}
+%		\item
+%	\end{enumerate}
+%
+%	\begin{table}[!h]
+%		\centering
+%		\begin{tabular}{|c|c|c}
+%			x & x & x
+%		\end{tabular}
+%		\caption{caption}
+%		\label{table1:sec1:chap1}
+%	\end{table}
+%
+%	\begin{itemize}
+%		\item
+%	\end{itemize}
+%
+%	\hyperref{https://www.gnu.org/licenses/lgpl-3.0.en.html}{}{}{\lr{LGPLv3}}
+%
+%	\begin{figure}[!h]
+%		\begin{center}
+%			%\includegraphics[width=0.8\textwidth]{vector.pdf}
+%		\end{center}
+%		\caption{caption}
+%		\label{fig1:sec1:chap1}
+%	\end{figure}
+%
+%	\begin{figure}[!h]
+%		\centering
+%		\footnotesize
+%		\begin{subfigure}[t]{0.47\linewidth}
+%			\centering
+%			%\frame{\includegraphics[width=\textwidth]{image.png}}
+%			\caption{عنوان}
+%			\label{subfig1:fig2:sec1:chap1}
+%		\end{subfigure}
+%		\hspace*{1cm}
+%		\normalsize
+%		\label{fig2:sec1:chap1}
+%		\caption{group caption}
+%	\end{figure}
+
+	%\chapter*{نتیجه گیری}\label{result:chap0}
+	%\addcontentsline{toc}{chapter}{نتیجه گیری}
+
+	\nocite{*}
+	\bibliographystyle{unsrt-fa}
+	\bibliography{reference}
+\end{document}

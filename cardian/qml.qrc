@@ -1,0 +1,52 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>resources/font/Courier Prime Code Italic.ttf</file>
+        <file>resources/font/Courier Prime Code.LICENSE</file>
+        <file>resources/font/Courier Prime Code.ttf</file>
+        <file>resources/font/Carlito-Regular.ttf</file>
+        <file>resources/font/Carlito-Bold.ttf</file>
+        <file>resources/font/cardian-icons.ttf</file>
+        <file>resources/font/Carlito.LICENSE</file>
+        <file>resources/car-image/car-front-lights.svg</file>
+        <file>resources/car-image/car-door-behind.svg</file>
+        <file>resources/car-image/car-door-front.svg</file>
+        <file>resources/car-image/car-battery.svg</file>
+        <file>resources/car-image/car-engine.svg</file>
+        <file>resources/car-image/car-body.svg</file>
+    </qresource>
+    <qresource prefix="/cardian">
+        <file>scripts/utils.js</file>
+        <file>windows/BaseWindow.qml</file>
+        <file>globals/Theme.qml</file>
+        <file>globals/Config.qml</file>
+        <file>globals/Fonts.qml</file>
+        <file>globals/Status.qml</file>
+        <file>controls/quick/TabLayout.qml</file>
+        <file>controls/quick/CustomItemDelegate.qml</file>
+        <file>controls/quick/TabButton.qml</file>
+        <file>controls/quick/Button.qml</file>
+        <file>controls/quick/Label.qml</file>
+        <file>controls/quick/StackView.qml</file>
+        <file>controls/quick/ToolTip.qml</file>
+        <file>controls/quick/TriStateButton.qml</file>
+        <file>controls/quick/ToolButton.qml</file>
+        <file>controls/BatteryIndicator.qml</file>
+        <file>controls/DataIndicator.qml</file>
+        <file>controls/MainButton.qml</file>
+        <file>controls/MapToolButton.qml</file>
+        <file>controls/LabledInput.qml</file>
+        <file>subpages/AdvancedPage.qml</file>
+        <file>subpages/ConfigurationPage.qml</file>
+        <file>subpages/HistoryPage.qml</file>
+        <file>pages/BasePage.qml</file>
+        <file>pages/ExtraPage.qml</file>
+        <file>pages/HomePage.qml</file>
+        <file>pages/LoginPage.qml</file>
+        <file>pages/MainPage.qml</file>
+        <file>pages/NavigationPage.qml</file>
+        <file>qmldir</file>
+        <file>controls/Expandable.qml</file>
+        <file>controls/HivePass.qml</file>
+    </qresource>
+</RCC>

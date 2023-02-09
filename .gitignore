@@ -1,0 +1,32 @@
+# build directories
+*/build-*
+android_release.keystore
+# vscode files
+*.autosave
+.vscode
+# latex fonts
+documents/latex/fonts
+# latex build files
+*.aux
+*.ilg
+*.out
+*.xdy
+*.lof
+*.bcf
+*.log
+*.run.xml
+*.txt
+*.blg
+*.lot
+*.synctex.gz
+*.fdb_latexmk
+*.nlo
+*.fls
+*.nls
+*.toc
+*.bbl
+*.brf
+
+*.user
+
+*.sdf

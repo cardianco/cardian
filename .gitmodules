@@ -10,3 +10,6 @@
 [submodule "cardian/third-parties/hive"]
 	path = cardian/third-parties/hive
 	url = https://github.com/SMR76/hive.git
+[submodule "cardian/third-parties/veqtor"]
+	path = cardian/third-parties/veqtor
+	url = https://github.com/SMR76/veqtor.git

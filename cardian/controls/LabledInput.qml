@@ -7,8 +7,15 @@ import cardian 0.1
 
 Control {
     id: control
-    property alias input: input
-    property alias label: label
+
+    readonly property alias input: input
+    readonly property alias label: label
+    readonly property alias buttons: buttons
+
+    //
+    signal cancel()
+    //
+    signal accept(string text)
 
     height: 25
 
@@ -16,22 +23,55 @@ Control {
         Label {
             id: label
             opacity: 0.7
-            padding: 6
+            rightPadding: 6
+            leftPadding: 6
             height: parent.height
             font: Fonts.subscript
         }
         GridSeparator { color: control.palette.button; vertical: false; opacity: 0.5 }
         TextField {
             id: input
-            padding: 0
+            rightPadding: 6
             opacity: activeFocus ? 1.0 : 0.7
-            width: parent.width - label.width - 10
+            width: parent.width - label.width - buttons.width
             height: parent.height
             font: Fonts.mono
             selectionColor: palette.windowText
             selectedTextColor: palette.window
             selectByMouse: true
             background: Item {}
+
+            // This element prevents the text field from having its drag event stolen by the parent.
+            DragHandler { target: null }
+        }
+        GridSeparator { color: control.palette.button; vertical: false; opacity: 0.5; visible: buttons.visible }
+        Grid {
+            id: buttons
+            spacing: 2
+            leftPadding: 4; rightPadding: 4
+            height: parent.height
+
+            flow: Grid.LeftToRight
+            verticalItemAlignment: Grid.AlignVCenter
+
+            visible: false
+
+            ToolButton {
+                height: parent.height
+                text: '\ue000'
+                visible: parent.visible
+                palette.buttonText: control.palette.button
+                font: Qomponent.font(Fonts.icon, {pointSize: 9})
+                onClicked: control.cancel()
+            }
+
+            ToolButton {
+                height: parent.height
+                text: '\ue008'
+                font: Qomponent.font(Fonts.icon, {pointSize: 9})
+                visible: parent.visible
+                onClicked: control.accept(input.text)
+            }
         }
     }
 

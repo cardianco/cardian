@@ -13,7 +13,6 @@ T.ToolButton {
     padding: 0
 
     contentItem: Text {
-        id: text
         height: 10
         visible: control.display === T.AbstractButton.TextOnly ||
                  control.display === T.AbstractButton.TextBesideIcon;

@@ -5,8 +5,8 @@ T.StackView {
     id: control
     topPadding: 5
 
-    component TAnim: PropertyAnimation { property: "opacity"; to: sqa.op; duration: 300 }
+    component OpacityAnim: OpacityAnimator { to: 0; duration: 300 }
 
-    replaceEnter: Transition { TAnim { to:1 } }
-    replaceExit: Transition { TAnim { to:0 } }
+    replaceEnter: Transition { OpacityAnim { to: 1 } }
+    replaceExit: Transition { OpacityAnim { to: 0 } }
 }

@@ -16,6 +16,7 @@ Control {
     component DataIcon: Grid {
         readonly property alias label: label
         readonly property alias value: value
+        visible: expanded
         horizontalItemAlignment: Grid.AlignHCenter
         Label { id: label; font: control.font }
         Label { id: value; font: Fonts.subscript }
@@ -28,8 +29,9 @@ Control {
     contentItem: VRow {
         Control {
             width: 20
-            height: implicitContentHeight + 20
+            height: implicitContentHeight + 8
             clip: true
+            palette.windowText: control.palette.buttonText
 
             Behavior on height {SmoothedAnimation{}}
 
@@ -39,7 +41,7 @@ Control {
                 verticalItemAlignment: Grid.AlignVCenter
 
                 BatteryIndicator { }
-                GridSep {visible: true}
+                GridSep {}
                 Label {
                     visible: expanded
                     text: ['\ue061','\ue063','\ue065'][Status.lock]
@@ -47,7 +49,6 @@ Control {
                 }
                 GridSep {}
                 DataIcon {
-                    visible: expanded
                     label.text: ['\ue143','\ue141'][Status.fuel]
                     value.text: '0'
                 }
@@ -59,10 +60,10 @@ Control {
                 }
                 GridSep {}
                 DataIcon {
-                    visible: expanded
                     label.text: ['\ue145','\ue144'][Status.engine]
                     value.text: ['off','on'][Status.engine]
                 }
+                Item {width: parent.width; height: 1}
             }
 
             background: Crystal {
@@ -72,8 +73,9 @@ Control {
 
         Control {
             width: 20
-            height: implicitContentHeight + 20
+            height: implicitContentHeight + 8
             clip: true
+            palette.windowText: control.palette.buttonText
 
             Behavior on height {SmoothedAnimation{}}
 
@@ -83,25 +85,21 @@ Control {
                 verticalItemAlignment: Grid.AlignVCenter
 
                 DataIcon {
-                    visible: expanded
                     topPadding: 4
                     label.text: '\ue08b'
                     value.text: Status.updown
                 }
                 GridSep {visible: true}
-                Label {
-                    visible: expanded
-                    text: ['\ue084','\ue084'][Status.gps]
-                    font: control.font
-                }
-                GridSep {}
-                Label {
-                    visible: expanded
-                    text: ['\ue033','\ue031'][Status.bluetooth]
-                    font: control.font
+                DataIcon {
+                    label.text: ['\ue084','\ue084'][Status.gps]
                 }
                 GridSep {}
                 DataIcon {
+                    label.text: ['\ue033','\ue031'][Status.bluetooth]
+                }
+                GridSep {}
+                DataIcon {
+                    visible: true
                     label.text: '\ue148'
                     value.text: Status.temperature
                 }
@@ -110,6 +108,7 @@ Control {
                     width: 15; height: 15
                     running: Status.processing
                 }
+                Item {width: parent.width; height: 1}
             }
 
             background: Crystal {

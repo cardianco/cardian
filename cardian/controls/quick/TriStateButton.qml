@@ -8,21 +8,23 @@ HexagonButton {
 
     enum States { None, Checked, Indeterminate }
 
+    readonly property int _state: Number.parseInt(control.state)
+
     state: TriStateButton.None
 
     Hexagon {
         ScaleAnimator on scale {
             from: 0; to: 1; duration: 1000; loops: -1
             easing.type: Easing.OutCubic
-            running: control.state == TriStateButton.Indeterminate
+            running: control._state === TriStateButton.Indeterminate && visible
         }
         OpacityAnimator on opacity {
             from: 0.7; to: 0.1; duration: 1000; loops: -1
             easing.type: Easing.OutCubic
-            running: control.state == TriStateButton.Indeterminate
+            running: control._state === TriStateButton.Indeterminate && visible
         }
 
-        visible: control.state == TriStateButton.Indeterminate
+        visible: control._state === TriStateButton.Indeterminate
 
         implicitWidth: control.width
         implicitHeight: implicitWidth * 0.85106
@@ -54,7 +56,7 @@ HexagonButton {
 
             width: parent.width - (visible ? 6 : 0)
             height: parent.height - (visible ? 6 : 0)
-            visible: control.checked || control.state == TriStateButton.Checked
+            visible: control.checked || control._state === TriStateButton.Checked
 
             color: 'transparent'
             strokeColor: parent.strokeColor

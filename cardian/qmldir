@@ -23,6 +23,11 @@ LabledInput         0.1 controls/LabledInput.qml
 MainButton          0.1 controls/MainButton.qml
 MapToolButton       0.1 controls/MapToolButton.qml
 Expandable          0.1 controls/Expandable.qml
+LineSeries          0.1 controls/LineSeries.qml
+EventItem           0.1 controls/EventItem.qml
+MapSystem           0.1 controls/MapSystem.qml
+CarView             0.1 controls/CarView.qml
+Range               0.1 controls/Range.qml
 
 Plasma              0.1 controls/effects/Plasma.qml
 
@@ -35,7 +40,11 @@ Navigation          0.1 pages/NavigationPage.qml
 
 Advanced            0.1 subpages/AdvancedPage.qml
 Configuration       0.1 subpages/ConfigurationPage.qml
-Events              0.1 subpages/HistoryPage.qml
+Events              0.1 subpages/EventsPage.qml
 BatteryStatus       0.1 subpages/statuses/BatteryStatus.qml
+FuelStatus          0.1 subpages/statuses/FuelStatus.qml
+DoorsStatus         0.1 subpages/statuses/DoorsStatus.qml
+SeatsStatus         0.1 subpages/statuses/SeatsStatus.qml
+LightsStatus        0.1 subpages/statuses/LightsStatus.qml
 
 BaseWindow          0.1 windows/BaseWindow.qml

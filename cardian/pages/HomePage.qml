@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.15
 
 import Hive 1.0
 import Qomponent 0.1
-
 import cardian 0.1
 
 BasePage {
@@ -17,17 +16,20 @@ BasePage {
         width: form.width
         height: form.height
 
+        CarView {
+            id: carview
+            x: (parent.width - width)/2
+            width: 250; height: 350
+            strokeWidth: 1.5
+            source: 'qrc:/resources/images/mazda-6-2019.svg'
+        }
+
         Grid {
             x: (parent.width - width)/2
             y: parent.height - height
-            horizontalItemAlignment: Grid.AlignHCenter
+            width: actions.width
 
-            TriStateButton {
-                width: 85 * 1.17
-                font: Fonts.icon
-                text: '\ue090'
-                state: TriStateButton.Indeterminate
-            }
+            horizontalItemAlignment: Grid.AlignHCenter
 
             Gap { height: 45 }
 
@@ -46,20 +48,20 @@ BasePage {
                     } Gap {}
                     TriStateButton {
                         font: Fonts.icon
-                        text: '\ue063'
+                        text: '\ue090'
                     } Gap {}
                     TriStateButton {
                         font: Fonts.icon
-                        text: '\ue07d'
+                        text: '\ue063'
                     }
                 }
 
                 Row {
-                    HexagonButton {
+                    TriStateButton {
                         font: Fonts.icon
                         text: '\ue173'
                     } Gap {}
-                    HexagonButton {
+                    TriStateButton {
                         font: Fonts.icon
                         text: '\ue037'
                     }

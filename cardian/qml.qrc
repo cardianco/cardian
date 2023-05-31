@@ -40,7 +40,7 @@
         <file>controls/effects/Plasma.qml</file>
         <file>subpages/AdvancedPage.qml</file>
         <file>subpages/ConfigurationPage.qml</file>
-        <file>subpages/HistoryPage.qml</file>
+        <file>subpages/EventsPage.qml</file>
         <file>pages/BasePage.qml</file>
         <file>pages/ExtraPage.qml</file>
         <file>pages/HomePage.qml</file>
@@ -49,5 +49,14 @@
         <file>pages/NavigationPage.qml</file>
         <file>qmldir</file>
         <file>controls/CarView.qml</file>
+        <file>controls/MapSystem.qml</file>
+        <file>controls/Range.qml</file>
+        <file>controls/LineSeries.qml</file>
+        <file>subpages/statuses/BatteryStatus.qml</file>
+        <file>subpages/statuses/FuelStatus.qml</file>
+        <file>subpages/statuses/DoorsStatus.qml</file>
+        <file>subpages/statuses/SeatsStatus.qml</file>
+        <file>subpages/statuses/LightsStatus.qml</file>
+        <file>controls/EventItem.qml</file>
     </qresource>
 </RCC>

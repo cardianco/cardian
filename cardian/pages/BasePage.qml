@@ -5,4 +5,5 @@ Page {
     id: control
     property real oriention: Qt.Vertical
     readonly property bool vertical: oriention == Qt.Vertical
+    background.opacity: 0.3
 }

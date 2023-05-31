@@ -8,23 +8,18 @@ import cardian 0.1
 BasePage {
     id: page
 
-    font: Qomponent.font(Fonts.icon, {pointSize: 12})
-
     component GridSep: GridSeparator {
         padding: 10
         contentItem{color: page.palette.button; opacity: 1}
     }
 
-    component Expand: Expandable {
-        label.font: Fonts.regular
-        font: page.font
-    }
-
     contentData: Flickable {
         width: page.width
-        height: page.height
+        height: page.height - 25
+
         contentWidth: grid.width
         contentHeight: grid.height
+
         flickableDirection: Flickable.VerticalFlick
 
         ScrollBar.vertical: ScrollBar {
@@ -32,35 +27,49 @@ BasePage {
             Behavior on width {NumberAnimation {}}
         }
 
+        /**
+         * The following lines simulate auto-scrolling to the expanded item.
+         * TODO: Write a better solution.
+         */
+        onContentHeightChanged: {
+            const item = grid.currentItem;
+            if(item) {
+                const vscroll = this.ScrollBar.vertical;
+                const itop = item.y, ibottom = item.y + item.height,
+                      vbottom = contentY + height;
+
+                if(ibottom > vbottom) {
+                    Qt.callLater(vscroll.increase);
+                } else if(itop < contentY) {
+                    Qt.callLater(vscroll.decrease);
+                }
+            }
+        }
+
         Grid {
             id: grid
+
+            property var currentItem: undefined
             spacing: 8
 
-            Expand {
+            Expandable {
+                width: page.availableWidth;
+                expandHeight: 200
+                topPadding: footer.height
                 title: 'live location'
                 icon.text: '\ue07a'
+                desc.text: '? N, ? E'
+
+                contentData: Label {
+                    text: 'Longitude: ?\n' + 'Latitude: ?'
+                }
             }
-            Expand {
-                title: 'lights'
-                icon.text: '\ue170'
-                expandHeight: 150
-            }
-            Expand {
-                title: 'seats'
-                icon.text: '\ue178'
-            }
-            Expand {
-                title: 'doors'
-                icon.text: '\ue17e'
-            }
-            Expand {
-                title: 'fuel'
-                icon.text: '\ue141'
-            }
-            Expand {
-                title: 'battery'
-                icon.text: '\ue168'
-            }
+
+            LightsStatus  { width: page.availableWidth; }
+            DoorsStatus   { width: page.availableWidth; }
+            FuelStatus    { width: page.availableWidth; }
+            BatteryStatus { width: page.availableWidth; }
+            SeatsStatus   { width: page.availableWidth; }
         }
     }
 }

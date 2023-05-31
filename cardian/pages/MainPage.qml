@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import Qt.labs.settings 1.1
 
 import Hive 1.0
 import Qomponent 0.1
@@ -27,6 +26,7 @@ BasePage {
     }
 
     header: Grid {
+        height: 0
         opacity: 0.7
         flow: Grid.TopToBottom
         horizontalItemAlignment: Grid.AlignHCenter
@@ -35,7 +35,7 @@ BasePage {
         Label {
             id: title
             text: stackView.currentItem.title
-            font: Fonts.regular
+            font: Qomponent.font(Fonts.regular, {weight: Font.ExtraBold})
             color: palette.windowText
         }
 
@@ -43,19 +43,18 @@ BasePage {
             width: 150; height: 1
             color: palette.button
         }
-        height: 0
     }
 
     DataIndicator {
         width: page.width
-        expanded: extraPage.StackView.status !== StackView.Active
+        expanded: extraPage.StackView.status !== StackView.Active && Config.indicators
     }
 
     contentData: StackView {
         id: stackView
         width: page.availableWidth
         height: page.availableHeight - navbar.height + 1
-        initialItem: extraPage
+        initialItem: homePage
     }
 
     footer: Grid {
@@ -66,7 +65,7 @@ BasePage {
 
         Item { height: 1; width: parent.width }
         Row {
-            HexagonButton {
+            HexagonButton { // Configuration
                 font: Fonts.icon
                 text: '\ue01c'
 
@@ -76,7 +75,7 @@ BasePage {
                     }
                 }
             } Gap {}
-            HexagonButton {
+            HexagonButton { // Home
                 font: Fonts.icon
                 text: '\ue161'
 
@@ -86,7 +85,7 @@ BasePage {
                     }
                 }
             } Gap {}
-            HexagonButton {
+            HexagonButton { // Navigation
                 font: Fonts.icon
                 text: '\ue07c'
 
@@ -113,11 +112,24 @@ BasePage {
         title: "Home"
         visible: false
         oriention: page.oriention
+        background.opacity: 0.0
     }
 
     Extra {
         id: extraPage
         visible: false
         oriention: page.oriention
+    }
+
+    background: HexagonEffect {
+        color: palette.window
+        strokeColor: palette.window
+        mask: false; strokeMask: true
+        strokeSource: ShaderEffectSource {
+            sourceItem: Plasma {
+                running: Config.backAnimation
+                width: page.width; height: page.height
+            }
+        }
     }
 }

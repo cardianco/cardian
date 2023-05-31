@@ -1,6 +1,6 @@
 #include "utils.h"
 
-namespace caralarm::core {
+namespace cardian::core {
 utils::utils(QObject *parent)
     : QObject{parent}{}
 }

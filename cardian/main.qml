@@ -7,6 +7,7 @@ import Qomponent 0.1
 import Hive 1.0
 
 import cardian 0.1
+import veqtor 0.1
 
 ApplicationWindow {
     id: window
@@ -18,7 +19,7 @@ ApplicationWindow {
     title: qsTr("Cardian")
 
     palette {
-        button: '#0777a1' // '#dd1221'
+        button: '#0777a1'
         buttonText: '#f1f2f3'
 
         window: '#121314'
@@ -30,8 +31,10 @@ ApplicationWindow {
     }
 
     contentData: Main {
+//    contentData: Home {
 //    contentData: Extra {
-//        contentData: Item {
+//    contentData: Navigation {
+//    contentData: Item {
         width: window.width
         height: window.height
     }

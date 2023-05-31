@@ -24,14 +24,18 @@ MainButton          0.1 controls/MainButton.qml
 MapToolButton       0.1 controls/MapToolButton.qml
 Expandable          0.1 controls/Expandable.qml
 
+Plasma              0.1 controls/effects/Plasma.qml
+
 BasePage            0.1 pages/BasePage.qml
 Extra               0.1 pages/ExtraPage.qml
 Home                0.1 pages/HomePage.qml
 Login               0.1 pages/LoginPage.qml
 Main                0.1 pages/MainPage.qml
 Navigation          0.1 pages/NavigationPage.qml
+
 Advanced            0.1 subpages/AdvancedPage.qml
 Configuration       0.1 subpages/ConfigurationPage.qml
-History             0.1 subpages/HistoryPage.qml
+Events              0.1 subpages/HistoryPage.qml
+BatteryStatus       0.1 subpages/statuses/BatteryStatus.qml
 
 BaseWindow          0.1 windows/BaseWindow.qml

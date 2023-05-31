@@ -9,7 +9,7 @@
 #include <QVariant>
 #include <QFile>
 
-namespace caralarm::core {
+namespace cardian::core {
 class utils : public QObject {
     Q_OBJECT
     QML_SINGLETON

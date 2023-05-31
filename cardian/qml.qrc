@@ -8,12 +8,10 @@
         <file>resources/font/Carlito-Bold.ttf</file>
         <file>resources/font/cardian-icons.ttf</file>
         <file>resources/font/Carlito.LICENSE</file>
-        <file>resources/car-image/car-front-lights.svg</file>
-        <file>resources/car-image/car-door-behind.svg</file>
-        <file>resources/car-image/car-door-front.svg</file>
-        <file>resources/car-image/car-battery.svg</file>
-        <file>resources/car-image/car-engine.svg</file>
-        <file>resources/car-image/car-body.svg</file>
+        <file>resources/images/front-lights.svg</file>
+        <file>resources/images/mazda-6-2019.svg</file>
+        <file>resources/images/seats.svg</file>
+        <file>resources/images/doors.svg</file>
     </qresource>
     <qresource prefix="/cardian">
         <file>scripts/utils.js</file>
@@ -36,6 +34,10 @@
         <file>controls/MainButton.qml</file>
         <file>controls/MapToolButton.qml</file>
         <file>controls/LabledInput.qml</file>
+        <file>controls/Expandable.qml</file>
+        <file>controls/HivePass.qml</file>
+        <file>controls/shaders/plasma.frag</file>
+        <file>controls/effects/Plasma.qml</file>
         <file>subpages/AdvancedPage.qml</file>
         <file>subpages/ConfigurationPage.qml</file>
         <file>subpages/HistoryPage.qml</file>
@@ -46,7 +48,6 @@
         <file>pages/MainPage.qml</file>
         <file>pages/NavigationPage.qml</file>
         <file>qmldir</file>
-        <file>controls/Expandable.qml</file>
-        <file>controls/HivePass.qml</file>
+        <file>controls/CarView.qml</file>
     </qresource>
 </RCC>

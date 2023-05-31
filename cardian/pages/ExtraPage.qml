@@ -10,41 +10,42 @@ BasePage {
     id: page
     title: swipeview.currentItem.title
 
-    contentData: Grid {
-        width: page.width
-        height: page.height
+    contentData: Column {
+
+        width: page.width; height: page.height
         padding: 5
         topPadding: 35
-        horizontalItemAlignment: Grid.AlignHCenter
 
         TabBar {
             id: tabbar
+            x: (parent.width - width)/2
             currentIndex: swipeview.currentIndex
 
-            TabButton {
-                text: "Advanced"
-                width: implicitWidth
-            }
-
-            TabButton {
-                text: "Configuration"
-                width: implicitWidth
-            }
-
-            TabButton {
-                text: "History"
-                width: implicitWidth
+            Repeater {
+                model: ["Advanced", "Configuration", "History"]
+                TabButton {
+                    text: modelData
+                    width: implicitWidth
+                }
             }
         }
 
         SwipeView {
             id: swipeview
-            width: parent.width - 2 * parent.padding
+
+            width: page.width - 2 * parent.padding
             height: page.height - y - 10
-            currentIndex: tabbar.currentIndex
+
             topPadding: 10
-            spacing: parent.padding * 2
             clip: true
+
+            spacing: parent.padding * 2
+            currentIndex: tabbar.currentIndex
+
+            Events {
+                oriention: page.oriention
+                title: "Commands History"
+            }
 
             Advanced {
                 oriention: page.oriention
@@ -54,11 +55,6 @@ BasePage {
             Configuration {
                 oriention: page.oriention
                 title: "Configuration"
-            }
-
-            History {
-                oriention: page.oriention
-                title: "Commands History"
             }
         }
     }

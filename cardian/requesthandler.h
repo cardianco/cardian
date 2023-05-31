@@ -11,7 +11,7 @@
 
 #include <QDir>
 
-namespace caralarm::network {
+namespace cardian::network {
 class requestHandler : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool processing READ processing NOTIFY processingChanged)

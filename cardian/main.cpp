@@ -8,6 +8,10 @@ int main(int argc, char *argv[])
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
+    /// BUG: qnanopainter will not function properly if started with QML preview
+    /// * need to add following line (maybe an OpenGL 3 bug).
+    QGuiApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
+
     QGuiApplication app(argc, argv);
 
     app.setApplicationDisplayName("Cardian");

@@ -21,7 +21,6 @@ RESOURCES += qml.qrc
 
 QML_IMPORT_NAME = cardian
 QML_IMPORT_MAJOR_VERSION = 0
-#QML_IMPORT_MINOR_VERSION = 1
 
 QML_IMPORT_PATH += $${PWD}/..
 QML2_IMPORT_PATH += $${PWD}/..
@@ -33,6 +32,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     cryptographic.h \
+    eventmodel.h \
     requesthandler.h \
     utils.h
 
@@ -46,4 +46,4 @@ DISTFILES += \
     android/gradlew.bat \
     android/res/values/libs.xml
 
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+#ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

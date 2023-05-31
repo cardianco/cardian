@@ -1,4 +1,3 @@
 #include "requesthandler.h"
 
-namespace caralarm::network {
-}
+namespace cardian::network {}

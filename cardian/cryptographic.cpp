@@ -1,5 +1,3 @@
 #include "cryptographic.h"
 
-namespace caralarm::core {
-
-}
+namespace cardian::core {}

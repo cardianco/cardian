@@ -9,9 +9,8 @@
 
 #include "third-parties/Qt-AES/qaesencryption.h"
 
-namespace caralarm::core {
-class cryptographic : public QObject
-{
+namespace cardian::core {
+class cryptographic : public QObject {
     Q_OBJECT
     QML_SINGLETON
     QML_NAMED_ELEMENT(Crypt)

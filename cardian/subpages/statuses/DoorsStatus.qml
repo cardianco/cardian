@@ -8,7 +8,7 @@ import veqtor 0.1
 Expandable {
     id: control
 
-    title: 'doors'
+    title: qsTr('doors')
     icon.text: '\ue17e'
 
     // TODO: replace this with real door statuses
@@ -87,7 +87,7 @@ Expandable {
                     property bool doorSt: doors[modelData]
                     rotation: angle
                     text: doorSt ? '\ue063' : '\ue061'
-                    palette.buttonText: doorSt ? '#fff' : '#aa50d160'
+                    palette.buttonText: doorSt ? control.palette.base : '#aa50d160'
                     font: QQ.Qomponent.font(Fonts.icon, {pointSize: 16})
                     onPressed: doors[modelData] = !doorSt
                 }
@@ -110,6 +110,10 @@ Expandable {
                     document[v.id].transform = Qt.binding(() => [{
                         t:'rotate', angle: internals.doorsConfig[i].angle
                     }]);
+                });
+
+                ['body','p1','p2','p3','hood','ceil'].forEach(id => {
+                    document[id].stroke = Qt.binding(() => control.palette.text);
                 });
             }
         }

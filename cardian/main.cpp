@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     app.setApplicationDisplayName("Cardian");
-    app.setOrganizationDomain("https://smr76.github.io");
+    app.setOrganizationDomain("https://smr.best");
     app.setOrganizationName("smr");
     app.setApplicationName("Cardian");
 

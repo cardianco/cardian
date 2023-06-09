@@ -124,9 +124,21 @@ BasePage {
     background: HexagonEffect {
         color: palette.window
         strokeColor: palette.window
-        mask: false; strokeMask: true
+        mask: true; strokeMask: true
+
         strokeSource: ShaderEffectSource {
             sourceItem: Plasma {
+                color: palette.button
+                secondary: palette.window
+                running: Config.backAnimation
+                width: page.width; height: page.height
+            }
+        }
+
+        source: ShaderEffectSource {
+            sourceItem: Plasma {
+                color: palette.base
+                secondary: palette.window
                 running: Config.backAnimation
                 width: page.width; height: page.height
             }

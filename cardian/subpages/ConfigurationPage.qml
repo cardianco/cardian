@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
 import Hive 1.0
 import Qomponent 0.1
@@ -12,7 +13,7 @@ BasePage {
     component GSep: GridSeparator {
         color: page.palette.button
         thickness: 5; padding: 0
-        opacity: .3
+        opacity: 0.3
     }
 
     component Head: Label {
@@ -38,23 +39,23 @@ BasePage {
             spacing: 5
 
             Column {
-                Head { text: 'API Tokens'; topPadding: 10 }
+                Head { text: qsTr('API Tokens'); topPadding: 10 }
                 Grid {
                     flow: page.vertical ? Grid.TopToBottom : Grid.LeftToRight
                     spacing: 5
 
                     LabledInput {
-                        label.text: 'map token'
+                        label.text: qsTr('map token')
                         input.text: Config.mapToken
                         buttons.visible: input.text !== Config.mapToken
-                        input.placeholderText: 'Enter MapGL token here'
+                        input.placeholderText: qsTr('Enter MapGL token here')
                         width: page.vertical ? page.width : (page.width/2 - parent.spacing/2)
                         onAccept: Config.mapToken = text
                     }
 
                     LabledInput {
-                        label.text: 'user token'
-                        input.placeholderText: 'Enter user toke here'
+                        label.text: qsTr('user token')
+                        input.placeholderText: qsTr('Enter user toke here')
                         width: page.vertical ? page.width : (page.width/2 - parent.spacing/2)
                         onAccept: Config.mapToken = text
                     }
@@ -63,16 +64,21 @@ BasePage {
 
             GSep{}
             Column {
-                Head { text: 'Appreance'; }
+                Head { text: qsTr('Appreance'); }
                 Row {
                     ToolButton {
                         id: darkmode
                         width: 25; height: 25
+                        enabled: !(Theme.rippleEffectItem && Theme.rippleEffectItem.running)
                         checkable: true
+                        checked: true
                         text: checked ? '\ue094' : '\ue095'
                         font: Qomponent.font(Fonts.icon, {pointSize: 13})
-                        checked: Config.darkmode
-                        onCheckedChanged: Config.darkmode = checked
+                        onCheckedChanged: {
+                            const center = Qt.point(width/2, height/2);
+                            Theme.rippleEffectItem.center = mapToItem(Window.contentItem, center);
+                            Theme.change(checked ? Theme.light : Theme.dark);
+                        }
                     }
                     Label {
                         height: parent.height
@@ -80,18 +86,18 @@ BasePage {
                     }
                 }
 
-                Head { text: 'Animations'; font.pointSize: 10 }
+                Head { text: qsTr('Animations'); font.pointSize: 10 }
                 CheckBox {
                     indicator { width: 21; height: 21 }
-                    text: 'Background animation'
+                    text: qsTr('Background animation')
                     checked: Config.backAnimation
                     onCheckedChanged: Config.backAnimation = checked
                 }
 
-                Head { text: 'Main Page'; font.pointSize: 10 }
+                Head { text: qsTr('Main Page'); font.pointSize: 10 }
                 CheckBox {
                     indicator { width: 21; height: 21 }
-                    text: 'Expanded indicators'
+                    text: qsTr('Expanded indicators')
                     checked: Config.indicators
                     onCheckedChanged: Config.indicators = checked
                 }

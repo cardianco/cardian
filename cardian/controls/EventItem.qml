@@ -46,7 +46,7 @@ Control {
                     Label { id: title }
                     Label {
                         topPadding: 5
-                        text: Scripts.readableTime(internals.elapsed).join(' ') + ' ago'
+                        text: Scripts.readableTime(internals.elapsed).join(' ') + qsTr(' ago')
                         font: Fonts.subscript
                     }
                 }

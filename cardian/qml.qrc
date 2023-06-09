@@ -12,6 +12,7 @@
         <file>resources/images/mazda-6-2019.svg</file>
         <file>resources/images/seats.svg</file>
         <file>resources/images/doors.svg</file>
+        <file>resources/mapgl/dark-style.json</file>
     </qresource>
     <qresource prefix="/cardian">
         <file>scripts/utils.js</file>

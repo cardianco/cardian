@@ -3,6 +3,7 @@ varying highp vec2 qt_TexCoord0;
 uniform highp float time;
 uniform highp vec2 ratio;
 uniform lowp vec4 color;
+uniform lowp vec4 secondary;
 
 //precision mediump float;
 
@@ -21,5 +22,5 @@ void main() {
     float r0 = plasma(uv, scale, time);
     float r1 = plasma(uv, scale * 2., time * 1.5 + .32);
     float r = r0 * r1 * 1. - pow(length(cntr * cntr) * .8, 6.);
-    gl_FragColor = r * color;
+    gl_FragColor = mix(secondary, color, r);
 }

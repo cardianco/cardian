@@ -15,28 +15,29 @@ ApplicationWindow {
     width: 265
     height: 480
 
+    minimumWidth: 200
+
     visible: true
-    title: qsTr("Cardian")
+    title: Application.name ?? qsTr("Cardian")
 
-    palette {
-        button: '#0777a1'
-        buttonText: '#f1f2f3'
+    palette: Theme.light
 
-        window: '#121314'
-        windowText: '#eee'
-        text: '#eee'
-
-        highlight: '#0759a1'
-        highlightedText: '#fff'
-    }
-
-    contentData: Main {
-//    contentData: Home {
 //    contentData: Extra {
 //    contentData: Navigation {
-//    contentData: Item {
+    contentData: Main {
         width: window.width
         height: window.height
+    }
+
+    RippleTT {
+        width: window.width
+        height: window.height
+        source: window.contentItem
+        duration: 800
+        Component.onCompleted: {
+            Theme.rippleEffectItem = this;
+            Theme.window = window;
+        }
     }
 
     SystemTrayIcon {

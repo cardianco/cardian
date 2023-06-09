@@ -11,10 +11,10 @@ Expandable {
     property rect viewBox: Qt.rect(0, 0, 450, 280)
     property alias lightsMode: tabbar.currentIndex
 
-    title: 'lights'
+    title: qsTr('lights')
     icon.text: '\ue170'
-    desc.text: ['Lights are off', 'High beam lights are on',
-                'Low beam lights are on'][lightsMode]
+    desc.text: [qsTr('Lights are off'), qsTr('High beam lights are on'),
+                qsTr('Low beam lights are on')][lightsMode]
 
     expandHeight: 170
 

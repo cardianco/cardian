@@ -9,10 +9,10 @@ Control {
     component Anim: NumberAnimation{easing.type: Easing.OutBack}
 
     property alias source: veq.src
-    property vector4d doors
+    property real strokeWidth: 2
     property vector2d frontLights
     property vector3d backLights
-    property real strokeWidth: 2
+    property vector4d doors
 
     QtObject {
         id: colors
@@ -60,6 +60,11 @@ Control {
 
             Object.values(document).forEach(el => {
                 if(el) el.strokeWidth = Qt.binding(() => control.strokeWidth);
+            });
+
+            ['body','p1','p2','p3','trunk','hood','ceil'
+             `flDoor`,`frDoor`,`blDoor`,`brDoor`].forEach(id => {
+                document[id].stroke = Qt.binding(() => palette.button);
             });
         }
     }

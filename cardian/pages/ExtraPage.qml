@@ -42,11 +42,6 @@ BasePage {
             spacing: parent.padding * 2
             currentIndex: tabbar.currentIndex
 
-            Events {
-                oriention: page.oriention
-                title: "Commands History"
-            }
-
             Advanced {
                 oriention: page.oriention
                 title: "Advanced Controls"
@@ -55,6 +50,11 @@ BasePage {
             Configuration {
                 oriention: page.oriention
                 title: "Configuration"
+            }
+
+            Events {
+                oriention: page.oriention
+                title: "Commands History"
             }
         }
     }

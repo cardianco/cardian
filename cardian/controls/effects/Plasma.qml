@@ -5,6 +5,7 @@ ShaderEffect {
 
     property alias running: timer.running
     property color color: '#23a8f2'
+    property color secondary: 'transparent'
     property real time: 10
     readonly property vector2d ratio: {
         const w = Math.max(width, height);

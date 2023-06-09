@@ -56,7 +56,7 @@ BasePage {
                 width: page.availableWidth;
                 expandHeight: 200
                 topPadding: footer.height
-                title: 'live location'
+                title: qsTr('live location')
                 icon.text: '\ue07a'
                 desc.text: '? N, ? E'
 

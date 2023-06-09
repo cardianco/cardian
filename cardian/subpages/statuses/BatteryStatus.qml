@@ -6,7 +6,7 @@ import cardian 0.1
 Expandable {
     id: control
 
-    title: 'battery'
+    title: qsTr('battery')
     icon.text: '\ue168'
     desc.text: `Charge: ${chart.last.toFixed(1)}%`
     expandHeight: chart.height + 100

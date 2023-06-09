@@ -11,6 +11,11 @@ import cardian 0.1
 BasePage {
     id: form
 
+    PositionSource {
+        id: posSource
+        name: "geoclue2"
+    }
+
     contentData: Item {
         width: form.width
         height: form.height
@@ -31,7 +36,7 @@ BasePage {
                 }
                 font: Fonts.subscript
             }
-            Label { text: "© Mapbox - © OSM"; font: Fonts.subscript }
+            Label { text: "© MapboxGL - © OSM"; font: Fonts.subscript }
         }
 
         Grid {
@@ -93,7 +98,10 @@ BasePage {
                 width: 40
                 font: Qomponent.font(Fonts.icon, {pointSize: 13})
                 text: mapsystem.currentUserLocation ? '\ue07a' : '\ue07b'
-                onClicked: mapsystem.center = marker.coordinate
+                onClicked: {
+                    posSource.start();
+                    mapsystem.center = posSource.position.coordinate;
+                }
             }
         }
     }

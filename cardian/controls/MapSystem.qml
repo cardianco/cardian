@@ -22,16 +22,17 @@ Control {
     ];
 
     property var mapBoxLayersStyle: [
-        {id:'land',                style: [{backgroundColor: ''}]},
+        {id:'land',                style: [{backgroundColor: palette.window}]},
         {id:'national-park',       style: [{fillColor: ''}]},
-        {id:'landuse',             style: [{fillColor: '#0a6b8f'}]},
+        {id:'landuse',             style: [{fillColor: '#219188'}]},
         {id:'pitch-outline',       style: [{lineColor: ''}]},
         {id:'waterway',            style: [{lineColor: ''}]},
         {id:'water',               style: [{fillColor: ''}]},
         {id:'building',            style: [{fillColor: ''}, {fillColorOutline: ''}]},
-        {id:'road-path',           style: [{lineColor: ''}]},
-        {id:'road-simple',         style: [{lineColor: ''}, {lineWidth: null}]},
-        {id:'road-label-simple',   style: [{textColor: ''}, {textHaloColor: ''}]},
+        {id:'road-path',           style: [{lineColor: palette.buttonText}]},
+        {id:'road-simple',         style: [{lineColor: palette.base}, {lineWidth: null}]},
+        {id:'bridge-simple',       style: [{lineColor: palette.base}, {lineWidth: null}]},
+        {id:'road-label-simple',   style: [{textColor: palette.text}, {textHaloColor: ''}]},
         {id:'state-label',         style: [{textColor: ''}, {textHaloColor: ''}]},
         {id:'country-label',       style: [{textColor: ''}, {textHaloColor: ''}]},
         {id:'continent-label',     style: [{textColor: ''}, {textHaloColor: ''}]},
@@ -42,10 +43,11 @@ Control {
         type:'paint'
         property string layer
         property string fillColor
-//        property string textColor
+        property string lineColor
+        property string textColor
 //        property string textHaloColor
-//        property string backgroundColor
-//        property string fillColorOutline
+        property string backgroundColor
+        property string fillColorOutline
     }
 
     /**
@@ -60,6 +62,7 @@ Control {
     }
 
     onMapBoxLayersStyleChanged: {
+        map.clearMapItems();
         const filter = (obj => Object.values(obj)[0] ? obj : null);
         mapBoxLayersStyle.forEach(layer => {
             const args = layer.style.reduce((c, v) => Object.assign(c, filter(v)), {});
@@ -104,7 +107,7 @@ Control {
 
             PluginParameter {
                 name: 'mapboxgl.mapping.additional_style_urls'
-                value: 'qrc:/style.json'
+                value: 'qrc:/resources/mapgl/dark-style.json'
             }
         }
 

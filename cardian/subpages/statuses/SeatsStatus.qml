@@ -7,7 +7,7 @@ import veqtor 0.1
 Expandable {
     id: control
 
-    title: 'seats'
+    title: qsTr('seats')
     icon.text: '\ue178'
 
     expandHeight: contentHeight + implicitFooterHeight + implicitHeaderHeight

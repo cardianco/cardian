@@ -112,6 +112,7 @@ Control {
                     root.viewBox.height = Qt.binding(() => control.availableHeight - xlabels.height);
                     path.strokeWidth = Qt.binding(() => control.strokeWidth);
                     path.stroke = Qt.binding(() => control.palette.highlight);
+                    path.fill = 'transparent';
                 }
             }
 

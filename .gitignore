@@ -4,6 +4,10 @@ android_release.keystore
 # vscode files
 *.autosave
 .vscode
+# android gradle generated files
+gradle-wrapper.jar
+gradlew*
+gradlew
 # latex fonts
 documents/latex/fonts
 # latex build files

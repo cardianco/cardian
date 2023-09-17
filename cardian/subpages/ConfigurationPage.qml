@@ -34,14 +34,16 @@ BasePage {
             Behavior on width {NumberAnimation {}}
         }
 
-        Grid {
+        QGrid {
             id: grid
+            vertical: true
+            horizontalItemAlignment: Grid.AlignLeft
             spacing: 5
 
             Column {
                 Head { text: qsTr('API Tokens'); topPadding: 10 }
-                Grid {
-                    flow: page.vertical ? Grid.TopToBottom : Grid.LeftToRight
+                QGrid {
+                    vertical: page.vertical
                     spacing: 5
 
                     LabledInput {
@@ -88,7 +90,7 @@ BasePage {
 
                 Head { text: qsTr('Animations'); font.pointSize: 10 }
                 CheckBox {
-                    indicator { width: 21; height: 21 }
+                    indicator { width: 24.675; height: 21 }
                     text: qsTr('Background animation')
                     checked: Config.backAnimation
                     onCheckedChanged: Config.backAnimation = checked
@@ -96,7 +98,7 @@ BasePage {
 
                 Head { text: qsTr('Main Page'); font.pointSize: 10 }
                 CheckBox {
-                    indicator { width: 21; height: 21 }
+                    indicator { width: 24.675; height: 21 }
                     text: qsTr('Expanded indicators')
                     checked: Config.indicators
                     onCheckedChanged: Config.indicators = checked

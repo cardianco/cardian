@@ -46,10 +46,11 @@ BasePage {
             }
         }
 
-        Grid {
+        QGrid {
             id: grid
 
             property var currentItem: undefined
+            vertical: true
             spacing: 8
 
             Expandable {

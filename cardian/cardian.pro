@@ -5,6 +5,9 @@ CONFIG += c++17 qmltypes
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+#ANDROID_ABIS="x86_64"
+ANDROID_ABIS="arm64-v8a"
+
 # Third parties
 include(third-parties/qomponent/Qomponent/Qomponent.pri)
 include(third-parties/hive/Hive/Hive.pri)
@@ -46,4 +49,4 @@ DISTFILES += \
     android/gradlew.bat \
     android/res/values/libs.xml
 
-#ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

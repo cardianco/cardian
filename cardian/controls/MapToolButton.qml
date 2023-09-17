@@ -12,7 +12,8 @@ Control {
     property alias plus: top
     property alias minus: bottom
 
-    contentItem: Grid {
+    contentItem: QGrid {
+        vertical: true
         ToolButton { id: top; width: parent.width; height: width; flat: true }
         GridSeparator { color: control.palette.button; opacity: 1.0 }
         ToolButton { id: bottom; width: parent.width; height: width; flat: true }

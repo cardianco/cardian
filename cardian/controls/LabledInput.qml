@@ -19,7 +19,7 @@ Control {
 
     height: 25
 
-    contentItem: Row {
+    contentItem: QGrid {
         Label {
             id: label
             opacity: 0.7
@@ -28,7 +28,7 @@ Control {
             height: parent.height
             font: Fonts.subscript
         }
-        GridSeparator { color: control.palette.button; vertical: false; opacity: 0.5 }
+        GridSeparator { color: control.palette.button; opacity: 0.5 }
         TextField {
             id: input
             rightPadding: 6
@@ -44,8 +44,8 @@ Control {
             // This element prevents the text field from having its drag event stolen by the parent.
             DragHandler { target: null }
         }
-        GridSeparator { color: control.palette.button; vertical: false; opacity: 0.5; visible: buttons.visible }
-        Grid {
+        GridSeparator { color: control.palette.button; opacity: 0.5; visible: buttons.visible }
+        QGrid {
             id: buttons
             spacing: 2
             leftPadding: 4; rightPadding: 4

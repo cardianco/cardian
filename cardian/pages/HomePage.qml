@@ -24,20 +24,19 @@ BasePage {
             source: 'qrc:/resources/images/mazda-6-2019.svg'
         }
 
-        Grid {
+        QGrid {
             x: (parent.width - width)/2
             y: parent.height - height
             width: actions.width
 
-            horizontalItemAlignment: Grid.AlignHCenter
+            vertical: true
 
             Gap { height: 45 }
 
-            Grid {
+            QGrid {
                 id: actions
 
-                layoutDirection: Qt.RightToLeft
-                horizontalItemAlignment: Grid.AlignHCenter
+                vertical: true
                 spacing: -form.bwidth/2 + 5
 
                 Row {

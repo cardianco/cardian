@@ -25,7 +25,7 @@ BasePage {
             anchors.fill: parent
         }
 
-        Grid {
+        QGrid {
             x: 5; y: parent.height - height - 30
             opacity: 0.7
 
@@ -39,12 +39,11 @@ BasePage {
             Label { text: "© MapboxGL - © OSM"; font: Fonts.subscript }
         }
 
-        Grid {
+        QGrid {
             x: parent.width - width - 10
             y: parent.height - height - 30
 
             opacity: 0.7
-            horizontalItemAlignment: Grid.AlignHCenter
 
             Label {
                 text: "\ue07f"
@@ -72,11 +71,11 @@ BasePage {
             }
         }
 
-        Grid {
-            spacing: 5
+        QGrid {
             x: parent.width - width - 5
             y: (parent.height - height)/2
-            horizontalItemAlignment: Grid.AlignHCenter
+            spacing: 5
+            vertical: true
 
             MapToolButton {
                 width: 35

@@ -12,8 +12,8 @@ Control {
 
     topPadding: 5
 
-    contentItem: Grid {
-        horizontalItemAlignment: Grid.AlignHCenter
+    contentItem: QGrid {
+        vertical: true
         spacing: 2
         Text {
             font: Qomponent.font(Fonts.icon, {pointSize: 11})

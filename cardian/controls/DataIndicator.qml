@@ -13,11 +13,11 @@ Control {
     property bool expanded: false
     readonly property bool vertical: oriention == Qt.Vertical
 
-    component DataIcon: Grid {
+    component DataIcon: QGrid {
         readonly property alias label: label
         readonly property alias value: value
         visible: expanded
-        horizontalItemAlignment: Grid.AlignHCenter
+        vertical: true
         Label { id: label; font: control.font }
         Label { id: value; font: Fonts.subscript }
     }
@@ -35,10 +35,9 @@ Control {
 
             Behavior on height {SmoothedAnimation{}}
 
-            contentItem: Grid {
+            contentItem: QGrid {
                 spacing: 4
-                horizontalItemAlignment: Grid.AlignHCenter
-                verticalItemAlignment: Grid.AlignVCenter
+                vertical: true
 
                 BatteryIndicator { }
                 GridSep {}
@@ -79,9 +78,9 @@ Control {
 
             Behavior on height {SmoothedAnimation{}}
 
-            contentItem: Grid {
+            contentItem: QGrid {
                 spacing: 4
-                horizontalItemAlignment: Grid.AlignHCenter
+                vertical: true
                 verticalItemAlignment: Grid.AlignVCenter
 
                 DataIcon {

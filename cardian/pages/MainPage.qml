@@ -25,11 +25,10 @@ BasePage {
         }
     }
 
-    header: Grid {
+    header: QGrid {
         height: 0
         opacity: 0.7
         flow: Grid.TopToBottom
-        horizontalItemAlignment: Grid.AlignHCenter
 
         Item { height: 1; width: parent.width }
         Label {
@@ -57,10 +56,10 @@ BasePage {
         initialItem: homePage
     }
 
-    footer: Grid {
+    footer: QGrid {
         id: navbar
         bottomPadding: 5
-        horizontalItemAlignment: Grid.AlignHCenter
+        vertical: true
         spacing: -page.itemswidth/2 + 5
 
         Item { height: 1; width: parent.width }

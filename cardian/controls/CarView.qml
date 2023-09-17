@@ -62,8 +62,8 @@ Control {
                 if(el) el.strokeWidth = Qt.binding(() => control.strokeWidth);
             });
 
-            ['body','p1','p2','p3','trunk','hood','ceil'
-             `flDoor`,`frDoor`,`blDoor`,`brDoor`].forEach(id => {
+            ['body','p1','p2','p3','trunk','hood','ceil',
+             'flDoor','frDoor','blDoor','brDoor'].forEach(id => {
                 document[id].stroke = Qt.binding(() => palette.button);
             });
         }

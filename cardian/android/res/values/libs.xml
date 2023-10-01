@@ -18,5 +18,4 @@
     <array name="load_local_libs">
         <!-- %%INSERT_LOCAL_LIBS%% -->
     </array>
-
 </resources>

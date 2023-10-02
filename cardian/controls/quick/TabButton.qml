@@ -15,7 +15,7 @@ T.TabButton {
     contentItem: Label {
         text: control.text
         font: control.font
-        color: control.palette.buttonText
+        color: control.palette.windowText
         opacity: control.checked ? 1.0 : 0.7
     }
 

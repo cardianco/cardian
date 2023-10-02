@@ -12,13 +12,15 @@ Page {
     property alias desc: description
     property alias expanded: btn.checked
 
-    property real expandHeight: 90
     property bool exclusiveExpand: true
+    property real expandHeight: implicitContentHeight +
+                                implicitHeaderHeight +
+                                implicitFooterHeight
 
     height: expanded ? expandHeight : header.height + footer.height
 
     clip: true
-    font: Qomponent.font(Fonts.icon, {pointSize: 12})
+    font: Qomponent.font(Fonts.icon, {pixelSize: 15})
 
     onExpandedChanged: {
         if(exclusiveExpand && expanded && parent) {
@@ -61,7 +63,7 @@ Page {
 
     footer: ToolButton {
         id: btn
-        height: 15
+        implicitHeight: 15
         checkable: true
         text: checked ? '\ue133' : '\ue134'
         font: control.font

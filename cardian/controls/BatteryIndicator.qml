@@ -15,15 +15,13 @@ Control {
     contentItem: QGrid {
         vertical: true
         spacing: 2
-        Text {
-            font: Qomponent.font(Fonts.icon, {pointSize: 11})
-            color: control.palette.windowText
+        Label {
+            font: Qomponent.font(Fonts.icon, {pixelSize: 14})
             text: String.fromCharCode(0xe040 + Math.round(control.boundedValue * 10))
         }
 
-        Text {
+        Label {
             text: (control.boundedValue * 100).toFixed()
-            color: control.palette.windowText
             font: Fonts.subscript
             opacity: 0.8
         }

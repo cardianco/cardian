@@ -6,7 +6,7 @@ import cardian 0.1
 
 QQC.Label {
     id: control
-    color: palette.windowText
+    color: palette.text
     font: Qomponent.font(Fonts.regular, {bold: true, weight: Font.Bold})
     verticalAlignment: Qt.AlignVCenter
 }

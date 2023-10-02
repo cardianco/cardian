@@ -13,10 +13,7 @@ BasePage {
         contentItem{color: page.palette.button; opacity: 1}
     }
 
-    contentData: Flickable {
-        width: page.width
-        height: page.height - 25
-
+    contentItem: Flickable {
         contentWidth: grid.width
         contentHeight: grid.height
 
@@ -55,14 +52,17 @@ BasePage {
 
             Expandable {
                 width: page.availableWidth;
-                expandHeight: 200
-                topPadding: footer.height
                 title: qsTr('live location')
                 icon.text: '\ue07a'
-                desc.text: '? N, ? E'
+                desc.text: (Status.location.x || '?') + ', ' +
+                           (Status.location.y || '?')
 
-                contentData: Label {
-                    text: 'Longitude: ?\n' + 'Latitude: ?'
+                contentItem: Label {
+                    visible: 50 < parent.height
+                    padding: 10
+                    text: 'Latitude: ' +    (Status.location.y || '?') +
+                          '\nLongitude: ' + (Status.location.x || '?')
+
                 }
             }
 

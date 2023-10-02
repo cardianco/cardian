@@ -11,13 +11,13 @@ Control {
     property alias source: veq.src
     property real strokeWidth: 2
     property vector2d frontLights
-    property vector3d backLights
+    property vector3d rearLights
     property vector4d doors
 
     QtObject {
         id: colors
-        readonly property color button: palette.button
-        readonly property color text: palette.text
+        readonly property color button: control.palette.button
+        readonly property color text: control.palette.text
     }
 
     Behavior on doors.x {Anim{}}
@@ -34,6 +34,7 @@ Control {
 
     contentItem: Veqtor {
         id: veq
+        visible: false
 
         onSvgLoaded: {
             const list = control.doorsConfig;
@@ -46,9 +47,9 @@ Control {
                 }]);
             });
 
-            document.rcLight.fill.a = Qt.binding(() => backLights.x);
-            document.rrLight.fill.a = Qt.binding(() => backLights.y);
-            document.rlLight.fill.a = Qt.binding(() => backLights.z);
+            document.rcLight.fill.a = Qt.binding(() => rearLights.x);
+            document.rrLight.fill.a = Qt.binding(() => rearLights.y);
+            document.rlLight.fill.a = Qt.binding(() => rearLights.z);
 
             document.frLight.stroke = Qt.binding(()   => frontLights.y ? colors.text : colors.button);
             document.frLightx.opacity = Qt.binding(() => frontLights.y === 1);
@@ -66,6 +67,8 @@ Control {
              'flDoor','frDoor','blDoor','brDoor'].forEach(id => {
                 document[id].stroke = Qt.binding(() => palette.button);
             });
+
+            visible = true;
         }
     }
 }

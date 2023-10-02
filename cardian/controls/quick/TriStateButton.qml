@@ -14,17 +14,19 @@ HexagonButton {
 
     Hexagon {
         ScaleAnimator on scale {
+            id: scaleAnimator
             from: 0; to: 1; duration: 1000; loops: -1
             easing.type: Easing.OutCubic
             running: control._state === TriStateButton.Indeterminate && visible
         }
+
         OpacityAnimator on opacity {
             from: 0.7; to: 0.1; duration: 1000; loops: -1
             easing.type: Easing.OutCubic
             running: control._state === TriStateButton.Indeterminate && visible
         }
 
-        visible: control._state === TriStateButton.Indeterminate
+        visible: scaleAnimator.running
 
         implicitWidth: control.width
         implicitHeight: implicitWidth * 0.85106
@@ -54,8 +56,8 @@ HexagonButton {
             x: (parent.width  - width + 1)/2
             y: (parent.height - height)/2
 
-            width: parent.width - (visible ? 6 : 0)
-            height: parent.height - (visible ? 6 : 0)
+            width: parent.width - 6 * visible
+            height: parent.height - 6 * visible
             visible: control.checked || control._state === TriStateButton.Checked
 
             color: 'transparent'

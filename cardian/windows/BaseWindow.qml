@@ -16,14 +16,7 @@ Window {
         id: btn
         width: 20
         height: parent.height
-        contentItem: Text {
-            width: btn.width
-            text: btn.text
-            color: btn.palette.windowText
-            font: btn.font
-            verticalAlignment: Qt.AlignVCenter
-            horizontalAlignment: Qt.AlignHCenter
-        }
+        contentItem: Label { text: btn.text; font: btn.font }
         background: Rectangle { color: btn.palette.button }
     }
 

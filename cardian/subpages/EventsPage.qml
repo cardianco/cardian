@@ -4,26 +4,12 @@ import QtQml.Models 2.15
 
 import Hive 1.0
 import cardian 0.1
+import cardian.core 0.1
 
 BasePage {
     id: page
 
-    ListModel {
-        id: listmodel
-        ListElement {
-            type: 0; timestamp: 1685345020; desc: ''
-            title: 'header hader'
-        }
-        ListElement {
-            type: 1; timestamp: 1685344020; desc: 'type'
-            title: ''
-        }
-    }
-
-    contentData: Column {
-        width: page.width
-        height: page.height
-
+    contentItem: Column {
         Row {
             id: header
         }
@@ -32,15 +18,16 @@ BasePage {
             id: listview
             width: page.width; height: page.height - header.height
             spacing: 3
-            model: listmodel
+            model: Status.events
 
             delegate: EventItem {
                 width: page.width
-                num: model.index
-                timestamp: model.timestamp
-                title.text: model.title
-                desc.text: model.desc
-                type: EventItem.Info
+                index: model.index
+                recordId: model.id
+                timestamp: model.utc
+                text: model.title
+                desc.text: JSON.stringify(JSON.parse(model.text), null, 2)
+                priority: 0
             }
         }
     }

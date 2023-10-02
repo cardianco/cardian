@@ -14,9 +14,19 @@ Control {
 
     contentItem: QGrid {
         vertical: true
-        ToolButton { id: top; width: parent.width; height: width; flat: true }
+        ToolButton {
+            id: top
+            width: parent.width; height: width
+            autoRepeat: true
+            font: Fonts.btnicon
+        }
         GridSeparator { color: control.palette.button; opacity: 1.0 }
-        ToolButton { id: bottom; width: parent.width; height: width; flat: true }
+        ToolButton {
+            id: bottom
+            width: parent.width; height: width
+            autoRepeat: true
+            font: Fonts.btnicon
+        }
     }
 
     background: Crystal {

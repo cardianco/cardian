@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-import QtLocation 5.15
 import QtPositioning 5.15
 
 import Hive 1.0
@@ -9,97 +8,156 @@ import Qomponent 0.1
 import cardian 0.1
 
 BasePage {
-    id: form
+    id: page
 
-    PositionSource {
-        id: posSource
-        name: "geoclue2"
-    }
+    implicitHeight: 400
 
-    contentData: Item {
-        width: form.width
-        height: form.height
+    contentItem: Control {
+        padding: 5
+        bottomPadding: 25
+        topPadding: page.height - implicitContentHeight - bottomPadding - padding
 
-        MapSystem {
+        background: MapSystem {
             id: mapsystem
             anchors.fill: parent
+            tapInserter.enabled: actions.path.checked
         }
 
-        QGrid {
-            x: 5; y: parent.height - height - 30
-            opacity: 0.7
+        contentItem: Column {
+            spacing: 5
+            width: parent.width
 
-            Label {
-                text: {
-                    return mapsystem.center.latitude.toFixed(4) + '\n' +
-                           mapsystem.center.longitude.toFixed(4)
+            QGrid {
+                x: parent.width - width
+                vertical: true
+                spacing: 2
+
+                MapToolButton {
+                    width: 35
+                    plus.text: "\u002b"
+                    minus.text: "\ue004"
+
+                    plus.onPressed: mapsystem.zoomLevel += 0.1
+                    minus.onPressed: mapsystem.zoomLevel -= 0.1
                 }
-                font: Fonts.subscript
-            }
-            Label { text: "© MapboxGL - © OSM"; font: Fonts.subscript }
-        }
 
-        QGrid {
-            x: parent.width - width - 10
-            y: parent.height - height - 30
+                HexagonButton {
+                    property PositionSource gps: PositionSource {
+                        name: "geoclue2"
+                        onPositionChanged: mapsystem.currentUserLocation = gps.position.coordinate;
+                    }
 
-            opacity: 0.7
+                    width: 40
+                    font: Fonts.icon
+                    text: gps.active && gps.valid ? '\ue07a' : '\ue07b'
 
-            Label {
-                text: "\ue07f"
-                font: Fonts.icon
-                rotation: -mapsystem.bearing
+                    onClicked: {
+                        gps.start();
+                        gps.update();
 
-                HoverHandler { cursorShape: Qt.PointingHandCursor }
-                TapHandler {
-                    onTapped: anim.start()
-
-                    property NumberAnimation anim: NumberAnimation {
-                        target: mapsystem
-                        property: "bearing"
-                        to: mapsystem.bearing < 180 ? 0 : 360
-                        duration: 500
-                        easing.type: Easing.InOutQuad
-                        onFinished: mapsystem.bearing = 0;
+                        mapsystem.center = gps.position.coordinate;
                     }
                 }
             }
 
-            Label {
-                text: mapsystem.zoomLevel.toFixed(2)
-                font: Fonts.subscript
-            }
-        }
+            QGrid {
+                x: parent.width - width - 10
+                vertical: true
 
-        QGrid {
-            x: parent.width - width - 5
-            y: (parent.height - height)/2
-            spacing: 5
-            vertical: true
+                ToolButton {
+                    text: "\ue07f"
+                    font: Fonts.btnicon
+                    palette.buttonText: page.palette.text
+                    rotation: -mapsystem.bearing
+                    onPressed: anim.start()
 
-            MapToolButton {
-                width: 35
-                plus {
-                    text: "\u002b";
-                    autoRepeat: true
-                    font: Fonts.icon
-                    onPressed: mapsystem.zoomLevel += 0.1;
+                    HoverHandler { cursorShape: Qt.PointingHandCursor }
+                    property NumberAnimation anim: NumberAnimation {
+                        target: mapsystem; property: 'bearing'
+                        to: mapsystem.bearing < 180 ? 0 : 360
+                        easing.type: Easing.InOutQuad
+                        onFinished: mapsystem.bearing = 0
+                        duration: 500
+                    }
                 }
-                minus {
-                    text: "\ue004";
-                    autoRepeat: true
-                    font: Fonts.icon
-                    onPressed: mapsystem.zoomLevel -= 0.1;
+
+                Label {
+                    text: mapsystem.zoomLevel.toFixed(2)
+                    font: Fonts.subscript
                 }
             }
 
-            HexagonButton {
-                width: 40
-                font: Qomponent.font(Fonts.icon, {pointSize: 13})
-                text: mapsystem.currentUserLocation ? '\ue07a' : '\ue07b'
-                onClicked: {
-                    posSource.start();
-                    mapsystem.center = posSource.position.coordinate;
+            Column {
+                Label {
+                    text: {
+                        const props = ['latitude','longitude'];
+                        return props.map(v => v + ': ' + mapsystem.center[v].toFixed(4)).join('\n');
+                    }
+                    font: Fonts.subscript
+                }
+                Label { text: "© MapboxGL - © OSM"; font: Fonts.subscript }
+            }
+
+            Column {
+                spacing: 3
+                width: parent.width
+
+                MapActions {
+                    id: actions
+
+                    property int eindex: -1
+
+                    width: parent.width
+
+                    cancel.visible: mapsystem.activePolygon.count
+                    cancel.onClicked: {
+                        mapsystem.activePolygon.clear();
+                        bounduryList.buttons.checkState = 0;
+                        eindex = -1;
+                    }
+
+                    ok.visible: mapsystem.activePolygon.count > 2
+                    ok.onClicked: {
+                        const model = mapsystem.activePolygon;
+                        const poly = Array(model.count).fill().map((_, i) => model.get(i));
+
+                        if(eindex === -1) Status.polygons.append({poly: poly});
+                        else Status.polygons.set(eindex, {poly: poly});
+
+                        mapsystem.activePolygon.clear();
+                        eindex = -1;
+                    }
+
+                    list.onCheckedChanged: if(!list.checked) Config.selectedMap = -1;
+
+                    sync.checked: Status.polygon.running
+                }
+
+                MapBounduryList {
+                    id: bounduryList
+
+                    model: Status.polygons
+                    width: parent.width
+                    height: actions.list.checked ? Math.min(80, implicitHeight) : 0
+
+                    visible: list.count
+
+                    onEditClicked: index => {
+                        actions.eindex = index;
+                        mapsystem.activePolygon.clear();
+
+                        const polyn = model.get(index).poly;
+                        const list = Array(polyn.count).fill().map((_, i) => polyn.get(i));
+
+                        list.forEach(c => {
+                            mapsystem.activePolygon.append({
+                                latitude: c.latitude,
+                                longitude: c.longitude
+                            });
+                        });
+                    }
+
+                    Behavior on height {NumberAnimation{}}
                 }
             }
         }

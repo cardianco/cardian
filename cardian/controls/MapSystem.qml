@@ -4,7 +4,11 @@ import QtQuick.Controls 2.15
 import QtLocation 5.15
 import QtPositioning 5.15
 
+import Qomponent 0.1
+
 import cardian 0.1
+
+import '.'
 
 Control {
     id: control
@@ -13,13 +17,18 @@ Control {
     property alias center: map.center
     property alias bearing: map.bearing
     property alias zoomLevel: map.zoomLevel
+    property alias tapInserter: tapInserter
+    property alias dragablePoly: dragPoly
 
-    property var currentUserLocation: undefined // QtPositioning.coordinate(36.3162, 59.5408)
-    property string token: "pk.eyJ1Ijoic21yNzYiLCJhIjoiY2t3dzVtN2ZvMDBmeDJ2bGFqcGR5em1leiJ9.SpNKEOM_dOgZyLTv154K_A"
+    property ListModel polygons: Status.polygons
+    property ListModel activePolygon: ListModel {}
 
-    property var polygons: [
-//        [[36.3162, 59.5408], [36.3112, 59.5338], [36.3112, 59.5458]]
-    ];
+    property var currentUserLocation: undefined
+    property var currentCarLocation: Status.location.x && Status.location.y ?
+                                         QtPositioning.coordinate(Status.location.y, Status.location.x) :
+                                         QtPositioning.coordinate()
+
+    property string token: Config.mapToken
 
     property var mapBoxLayersStyle: [
         {id:'land',                style: [{backgroundColor: palette.window}]},
@@ -29,7 +38,6 @@ Control {
         {id:'waterway',            style: [{lineColor: ''}]},
         {id:'water',               style: [{fillColor: ''}]},
         {id:'building',            style: [{fillColor: ''}, {fillColorOutline: ''}]},
-        {id:'road-path',           style: [{lineColor: palette.buttonText}]},
         {id:'road-simple',         style: [{lineColor: palette.base}, {lineWidth: null}]},
         {id:'bridge-simple',       style: [{lineColor: palette.base}, {lineWidth: null}]},
         {id:'road-label-simple',   style: [{textColor: palette.text}, {textHaloColor: ''}]},
@@ -37,18 +45,8 @@ Control {
         {id:'country-label',       style: [{textColor: ''}, {textHaloColor: ''}]},
         {id:'continent-label',     style: [{textColor: ''}, {textHaloColor: ''}]},
         {id:'natural-point-label', style: [{textColor: ''}, {textHaloColor: ''}, {iconOpacity: 0}]},
+        // {id:'road-path',           style: [{lineColor: palette.buttonText}]},
     ];
-
-    property Component paintParam: MapParameter {
-        type:'paint'
-        property string layer
-        property string fillColor
-        property string lineColor
-        property string textColor
-//        property string textHaloColor
-        property string backgroundColor
-        property string fillColorOutline
-    }
 
     /**
      * @abstract Route from start point to endpoint
@@ -61,14 +59,28 @@ Control {
         }
     }
 
+    /**
+     * @abstract Create a MapParameter object from input args.
+     * @param args {Object}, properties of MapParameter.
+     */
+    function mapItemFactory(args: Object): string {
+        const keys = Object.keys(args);
+        const source = `import QtLocation 5.15\nMapParameter { type:'paint'; ${keys.reduce((c,k) => c + `property string ${k};`, '')} }`;
+        const object =  Qt.createQmlObject(source, map);
+        keys.forEach(k => object[k] = args[k]);
+        return object;
+    }
+
     onMapBoxLayersStyleChanged: {
         map.clearMapItems();
-        const filter = (obj => Object.values(obj)[0] ? obj : null);
-        mapBoxLayersStyle.forEach(layer => {
-            const args = layer.style.reduce((c, v) => Object.assign(c, filter(v)), {});
-            if(Object.keys(args).length) {
-                const obj = paintParam.createObject(map, Object.assign(args, {layer: layer.id}));
-                map.addMapParameter(obj)
+        const filter = function(obj) { return Object.values(obj)[0] ? obj : null };
+        mapBoxLayersStyle.forEach(function(layer) {
+            /// Convert styles to a single object
+            const styles = layer.style.reduce((c, v) => Object.assign(c, filter(v)), {});
+
+            if(Object.keys(styles).length) {
+                const args = Object.assign(styles, {layer: layer.id});
+                map.addMapParameter(mapItemFactory(args));
             }
         });
     }
@@ -95,10 +107,12 @@ Control {
         copyrightsVisible: false
         center: QtPositioning.coordinate(36.3162, 59.5408) // Mashhad
         color: "transparent"
+        gesture.enabled: !dragPoly.dragging
 
         plugin: Plugin {
-            locales: "fa_IR"
-            preferred: ["mapboxgl", "osm"]
+            name: 'mapboxgl'
+            locales: ['en_US' ,'fa_IR']
+            preferred: ["mapboxgl", 'osm', "mapbox"]
 
             PluginParameter {
                 name: 'mapboxgl.access_token'
@@ -106,8 +120,24 @@ Control {
             }
 
             PluginParameter {
+                name: 'mapboxgl.mapping.cache.memory'
+                value: false
+            }
+
+            PluginParameter {
                 name: 'mapboxgl.mapping.additional_style_urls'
                 value: 'qrc:/resources/mapgl/dark-style.json'
+            }
+        }
+
+        TapHandler {
+            id: tapInserter
+            grabPermissions: TapHandler.ApprovesTakeOverByAnything
+            /// TODO: Insert the new point between the nearest points.
+            onTapped: event => {
+                const {longitude, latitude} = map.toCoordinate(event.position);
+                const {i} = JsUtils.findNearestPoint(Qt.vector2d(longitude, latitude), activePolygon);
+                activePolygon.insert(i, {longitude, latitude});
             }
         }
 
@@ -123,32 +153,63 @@ Control {
             }
         }
 
-        Repeater {
+        MapItemView {
             model: polygons
-            MapPolygon {
-                color: control.palette.highlight
-                border.color: '#fff'
-                border.width: 4
-                opacity: 0.5
-                path: modelData.map(v => {return {latitude: v[0], longitude: v[1]}})
+
+            /// TODO: Add a id number, or some pattern inside polygon.
+            delegate: MapItemGroup {
+                required property int index
+                required property var poly
+
+                MapPolygon {
+                    opacity: 0.3
+                    color: index === Config.selectedMap ? control.palette.text : control.palette.highlight
+                    border.color: control.palette.window
+                    border.width: 1
+
+                    path: Array(poly.count).fill().map((_, i) => poly.get(i));
+                }
+
+                MapQuickItem {
+                    anchorPoint.x: sourceItem.width/2
+                    anchorPoint.y: sourceItem.height/2
+                    coordinate: {
+                        const {y, x} = JsUtils.polygonCenter(poly);
+                        return QtPositioning.coordinate(y, x);
+                    }
+                    sourceItem: Label {
+                        text: index + 1; font: Fonts.head
+                        color: control.palette.buttonText
+                        opacity: 0.6
+                    }
+                }
+            }
+        }
+
+        MapDragPolygon {
+            id: dragPoly
+            model: activePolygon
+            font: Fonts.btnicon
+            subscriptFont: Fonts.subscript
+        }
+
+        MapQuickItem {
+            coordinate: control.currentUserLocation ?? QtPositioning.coordinate()
+            anchorPoint{x: 7.5; y: 7.5}
+            sourceItem: Rectangle {
+                width: 15; height: 15; radius: width
+                color: control.palette.text
+                border.color: control.palette.button
             }
         }
 
         MapQuickItem {
-            id: userLocation
+            coordinate: control.currentCarLocation ?? QtPositioning.coordinate()
+            anchorPoint{x: sourceItem.width / 2; y: sourceItem.height / 2}
             sourceItem: Label {
                 text: '\ue079'; font: Fonts.icon
                 color: control.palette.text
             }
-            coordinate: control.currentUserLocation ?? QtPositioning.coordinate()
-            anchorPoint.x: sourceItem.width / 2
-            anchorPoint.y: sourceItem.height
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            // BUG: It seems that there is no possible way to set the 'ClosedHand' shape solely by dragging.
-            cursorShape: pressed || map.gesture.panActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
         }
 
         Shortcut {

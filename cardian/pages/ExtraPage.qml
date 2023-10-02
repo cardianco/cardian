@@ -10,9 +10,7 @@ BasePage {
     id: page
     title: swipeview.currentItem.title
 
-    contentData: Column {
-
-        width: page.width; height: page.height
+    contentItem: Column {
         padding: 5
         topPadding: 35
 
@@ -26,6 +24,7 @@ BasePage {
                 TabButton {
                     text: modelData
                     width: implicitWidth
+                    font: Fonts.regular
                 }
             }
         }

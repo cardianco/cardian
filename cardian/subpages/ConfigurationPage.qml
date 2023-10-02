@@ -22,9 +22,9 @@ BasePage {
         opacity: 0.8
     }
 
-    contentData: Flickable {
-        width: page.width
-        height: page.height
+    font: Fonts.regular
+
+    contentItem: Flickable {
         contentWidth: grid.width
         contentHeight: grid.height
         flickableDirection: Flickable.VerticalFlick
@@ -36,30 +36,47 @@ BasePage {
 
         QGrid {
             id: grid
+            width: page.width
             vertical: true
             horizontalItemAlignment: Grid.AlignLeft
+            bottomPadding: 20
             spacing: 5
 
             Column {
                 Head { text: qsTr('API Tokens'); topPadding: 10 }
                 QGrid {
-                    vertical: page.vertical
+                    vertical: true
                     spacing: 5
+                    preferredRows: !page.vertical + 1
 
                     LabledInput {
+                        width: page.vertical ? page.width : (page.width - parent.spacing)/2
+
                         label.text: qsTr('map token')
                         input.text: Config.mapToken
-                        buttons.visible: input.text !== Config.mapToken
                         input.placeholderText: qsTr('Enter MapGL token here')
-                        width: page.vertical ? page.width : (page.width/2 - parent.spacing/2)
-                        onAccept: Config.mapToken = text
+
+                        onAccepted: text => Config.mapToken = text;
                     }
 
                     LabledInput {
-                        label.text: qsTr('user token')
-                        input.placeholderText: qsTr('Enter user toke here')
-                        width: page.vertical ? page.width : (page.width/2 - parent.spacing/2)
-                        onAccept: Config.mapToken = text
+                        width: page.vertical ? page.width : (page.width - parent.spacing)/2
+
+                        label.text: qsTr('session token')
+                        input.text: Config.token
+                        input.placeholderText: qsTr('Enter session token here')
+
+                        onAccepted: text => Config.token = text;
+                    }
+
+                    LabledInput {
+                        width: page.vertical ? page.width : (page.width - parent.spacing)/2
+
+                        label.text: qsTr('API url')
+                        input.text: Config.api
+                        input.placeholderText: qsTr('Enter api url here')
+
+                        onAccepted: text => Config.api = text;
                     }
                 }
             }
@@ -67,37 +84,43 @@ BasePage {
             GSep{}
             Column {
                 Head { text: qsTr('Appreance'); }
+
                 Row {
                     ToolButton {
                         id: darkmode
                         width: 25; height: 25
-                        enabled: !(Theme.rippleEffectItem && Theme.rippleEffectItem.running)
+                        enabled: !Theme.rippleEffectItem.running
                         checkable: true
-                        checked: true
                         text: checked ? '\ue094' : '\ue095'
-                        font: Qomponent.font(Fonts.icon, {pointSize: 13})
+                        font: Qomponent.font(Fonts.icon, {pixelSize: 16})
+
                         onCheckedChanged: {
                             const center = Qt.point(width/2, height/2);
                             Theme.rippleEffectItem.center = mapToItem(Window.contentItem, center);
-                            Theme.change(checked ? Theme.light : Theme.dark);
+                            Theme.change(!checked ? 'dark' : 'light');
                         }
                     }
+
                     Label {
                         height: parent.height
-                        text: darkmode.checked ? "Dark mode" : "Light mode"
+                        text: darkmode.checked ? qsTr("Dark mode") : qsTr("Light mode")
                     }
                 }
 
-                Head { text: qsTr('Animations'); font.pointSize: 10 }
+                Head { text: qsTr('Animations'); font.pixelSize: 13 }
+
                 CheckBox {
+                    padding: 2
                     indicator { width: 24.675; height: 21 }
                     text: qsTr('Background animation')
                     checked: Config.backAnimation
                     onCheckedChanged: Config.backAnimation = checked
                 }
 
-                Head { text: qsTr('Main Page'); font.pointSize: 10 }
+                Head { text: qsTr('Main Page'); font.pixelSize: 13 }
+
                 CheckBox {
+                    padding: 2
                     indicator { width: 24.675; height: 21 }
                     text: qsTr('Expanded indicators')
                     checked: Config.indicators
@@ -105,7 +128,65 @@ BasePage {
                 }
             }
 
-            GSep{}
+            Column {
+                spacing: 4
+
+                Head {
+                    text: qsTr('Font Selector')
+                    font.pixelSize: 13
+                }
+
+                FontSelector {
+                    width: page.availableWidth
+                    height: 180
+                    font: Qt.font({pixelSize: 12})
+                    target: Fonts
+                    properties: ['icon', 'btnicon', 'head', 'mono', 'regular', 'subscript']
+
+                    palette.base: '#2aa2dd'
+                    palette.alternateBase: '#2aa2dd'
+                }
+            }
+
+            Column {
+                spacing: 4
+
+                Head {
+                    text: qsTr('Theme Editor');
+                    font.pixelSize: 13
+                }
+
+                VRow {
+                    width: page.availableWidth
+                    CheckBox {
+                        id: themeLiveEdit
+                        padding: 0
+                        topPadding: 0
+                        indicator{width: 20 * 1.175; height: 20}
+                        text: qsTr('Live edit')
+                    }
+
+                    Button {
+                        y: 3
+                        text: qsTr('Save')
+                        width: 50; height: 20
+                        visible: themeeditor.bufferPalette !== themeeditor.target[themeeditor.property]
+                        onClicked: themeeditor.save()
+                    }
+                }
+
+                ThemeEditor {
+                    id: themeeditor
+                    target: Theme
+                    property: Theme.active
+                    width: page.availableWidth
+                    height: 200
+                    onBufferPaletteChanged: themeLiveEdit.checked && save()
+
+                    palette.alternateBase: '#2aa2dd'
+                    palette.base: '#2aa2dd'
+                }
+            }
         }
     }
 }

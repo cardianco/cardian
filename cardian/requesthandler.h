@@ -14,23 +14,25 @@
 namespace cardian::network {
 class requestHandler : public QObject {
     Q_OBJECT
-    Q_PROPERTY(bool processing READ processing NOTIFY processingChanged)
+    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged RESET resetStatus)
     QML_NAMED_ELEMENT(RequestHandler)
     QML_ADDED_IN_MINOR_VERSION(1)
 public:
     enum Status {
-        Error = -1, None, Pending, Processing, Completed,
+        Error = -1, None, Pending, Running, Completed,
     };
     Q_ENUM(Status)
 
     explicit requestHandler(QObject *parent = nullptr)
-        : QObject{parent}, mProcessing(false), mStatus(Status::None) {
+        : QObject{parent}, mReply(nullptr), mRunning(false), mStatus(Status::None) {
         mNetworkManager.setAutoDeleteReplies(true);
     }
 
     Q_INVOKABLE bool getRequest(const QUrl &url) {
-        if(mReply->isRunning()) return false;
+        /// TODO: Use a QReply list instead of a single QReply object.
+        /// QNetworkManager should be able to handle 8 requests at a time.
+        if(mReply && mReply->isRunning()) return false;
 
         QNetworkRequest req(url);
         req.setTransferTimeout(3000);
@@ -51,7 +53,8 @@ public:
 
     Q_INVOKABLE bool postRequest(const QUrl &url, const QByteArray &body,
                                  const QVariantMap &extraHeads = QVariantMap()) {
-        if(mReply->isRunning()) return false;
+        /// TODO: Move to another thread
+        if(mReply && mReply->isRunning()) return false;
 
         QNetworkRequest req(url);
         req.setTransferTimeout(3000);
@@ -60,8 +63,8 @@ public:
         setStatus(Status::None);
         req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-        for(const auto &head: extraHeads) {
-            req.setRawHeader(head.toByteArray(), extraHeads[head.toByteArray()].toByteArray());
+        for(const auto &head: extraHeads.keys()) {
+            req.setRawHeader(head.toLatin1(), extraHeads[head].toByteArray());
         }
 
         mReply = mNetworkManager.post(req, body);
@@ -74,11 +77,11 @@ public:
         return true;
     }
 
-    bool processing() const { return mProcessing; }
-    void setProcessing(bool processing) {
-        if (mProcessing == processing) return;
-        mProcessing = processing;
-        emit processingChanged();
+    bool running() const { return mRunning; }
+    void setRunning(bool arunning) {
+        if (mRunning == arunning) return;
+        mRunning = arunning;
+        emit runningChanged();
     }
 
     const Status& status() const { return mStatus; }
@@ -86,20 +89,20 @@ public:
         if(mStatus == newStatus) return;
         mStatus = newStatus;
         emit statusChanged();
-        setProcessing(newStatus == Pending ||
-                      newStatus == Processing);
+        setRunning(newStatus == Pending || newStatus == Running);
     }
 
-public slots:
+private slots:
     void onReadyRead() {
         mBuffer.append(mReply->readAll());
-        setStatus(Status::Processing);
+        setStatus(Status::Running);
     }
 
     void onFinished() {
         mBuffer.append(mReply->readAll());
         setStatus(Status::Completed);
         emit finished(mBuffer);
+        mReply = nullptr;
     }
 
     void onErrorOccurred(QNetworkReply::NetworkError error) {
@@ -107,8 +110,9 @@ public slots:
         emit errorOccurred(QString("Network Error (Code: %1)").arg(error));
     }
 
+public slots:
     void abort() {
-        mReply->abort();
+        if(mReply) mReply->abort();
         emit aborted();
         setStatus(Status::None);
     }
@@ -118,7 +122,7 @@ public slots:
     }
 
 signals:
-    void processingChanged();
+    void runningChanged();
     void statusChanged();
 
     void errorOccurred(QString errorMessage);
@@ -130,7 +134,7 @@ private:
     QNetworkReply *mReply;
     QByteArray mBuffer;
 
-    bool mProcessing;
+    bool mRunning;
     Status mStatus;
 };
 }

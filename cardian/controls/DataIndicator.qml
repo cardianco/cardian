@@ -24,14 +24,14 @@ Control {
 
     component GridSep: GridSeparator { padding: 2; visible: expanded }
 
-    font: {font = Fonts.icon; font.pointSize = 11}
+    font: Fonts.icon
 
     contentItem: VRow {
         Control {
             width: 20
             height: implicitContentHeight + 8
             clip: true
-            palette.windowText: control.palette.buttonText
+            palette.text: control.palette.buttonText
 
             Behavior on height {SmoothedAnimation{}}
 
@@ -39,28 +39,28 @@ Control {
                 spacing: 4
                 vertical: true
 
-                BatteryIndicator { }
-                GridSep {}
-                Label {
-                    visible: expanded
-                    text: ['\ue061','\ue063','\ue065'][Status.lock]
-                    font: control.font
+                BatteryIndicator {
+                    value: Status.battery
                 }
                 GridSep {}
                 DataIcon {
-                    label.text: ['\ue143','\ue141'][Status.fuel]
-                    value.text: '0'
-                }
-                GridSep {}
-                Label {
                     visible: expanded
-                    text: ['\ue037','\ue036'][Status.alarm]
-                    font: control.font
+                    label.text: ['\ue061','\ue063','\ue065'][Number(Status.lock)]
                 }
                 GridSep {}
                 DataIcon {
-                    label.text: ['\ue145','\ue144'][Status.engine]
-                    value.text: ['off','on'][Status.engine]
+                    label.text: ['\ue141', '\ue143'][Number(Status.fuel < 1)]
+                    value.text: Status.fuel
+                }
+                GridSep {}
+                DataIcon {
+                    visible: expanded
+                    label.text: ['\ue037','\ue036'][Number(Status.alarm)]
+                }
+                GridSep {}
+                DataIcon {
+                    label.text: ['\ue145','\ue144'][Number(Status.engine)]
+                    value.text: ['off','on'][Number(Status.engine)]
                 }
                 Item {width: parent.width; height: 1}
             }
@@ -74,7 +74,7 @@ Control {
             width: 20
             height: implicitContentHeight + 8
             clip: true
-            palette.windowText: control.palette.buttonText
+            palette.text: control.palette.buttonText
 
             Behavior on height {SmoothedAnimation{}}
 
@@ -90,11 +90,11 @@ Control {
                 }
                 GridSep {visible: true}
                 DataIcon {
-                    label.text: ['\ue084','\ue084'][Status.gps]
+                    label.text: ['\ue086','\ue084'][Number(Status.gps)]
                 }
                 GridSep {}
                 DataIcon {
-                    label.text: ['\ue033','\ue031'][Status.bluetooth]
+                    label.text: ['\ue033','\ue031'][Number(Status.bluetooth)]
                 }
                 GridSep {}
                 DataIcon {
@@ -102,10 +102,10 @@ Control {
                     label.text: '\ue148'
                     value.text: Status.temperature
                 }
-                GridSep {}
+                GridSep { visible: Config.processing }
                 BusyIndicator {
-                    width: 15; height: 15
-                    running: Status.processing
+                    width: 12; height: 12
+                    running: Config.processing
                 }
                 Item {width: parent.width; height: 1}
             }

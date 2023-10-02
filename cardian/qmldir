@@ -1,7 +1,7 @@
-module cardian
+module qml.cardian
 typeinfo hive.qmltypes
 
-Script              0.1 scripts/utils.js
+JsUtils             0.1 scripts/utils.mjs
 
 singleton Config    0.1 globals/Config.qml
 singleton Fonts     0.1 globals/Fonts.qml
@@ -17,17 +17,20 @@ TabLayout           0.1 controls/quick/TabLayout.qml
 ToolTip             0.1 controls/quick/ToolTip.qml
 TriStateButton      0.1 controls/quick/TriStateButton.qml
 ToolButton          0.1 controls/quick/ToolButton.qml
+
 BatteryIndicator    0.1 controls/BatteryIndicator.qml
 DataIndicator       0.1 controls/DataIndicator.qml
 LabledInput         0.1 controls/LabledInput.qml
 MainButton          0.1 controls/MainButton.qml
-MapToolButton       0.1 controls/MapToolButton.qml
 Expandable          0.1 controls/Expandable.qml
-LineSeries          0.1 controls/LineSeries.qml
 EventItem           0.1 controls/EventItem.qml
-MapSystem           0.1 controls/MapSystem.qml
 CarView             0.1 controls/CarView.qml
-Range               0.1 controls/Range.qml
+RangeLineSeries     0.1 controls/RangeLineSeries.qml
+
+MapSystem           0.1 controls/MapSystem.qml
+MapToolButton       0.1 controls/MapToolButton.qml
+MapActions          0.1 controls/MapActions.qml
+MapBounduryList     0.1 controls/MapBounduryList.qml
 
 Plasma              0.1 controls/effects/Plasma.qml
 

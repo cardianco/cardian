@@ -8,69 +8,99 @@ import cardian 0.1
 Control {
     id: control
 
-    readonly property alias input: input
-    readonly property alias label: label
-    readonly property alias buttons: buttons
-
-    //
-    signal cancel()
-    //
-    signal accept(string text)
-
     height: 25
 
+    readonly property alias input: input
+    readonly property alias label: label
+
+    /// @signal canceled, Triggers on cancel clicked
+    signal canceled();
+    /// @signal accepted, Triggers on accept clicked
+    signal accepted(string text);
+
+    component ToolBtn: ToolButton {
+        height: parent.height
+        palette.buttonText: control.palette.button
+        font: Qomponent.font(Fonts.icon, {pixelSize: 12})
+    }
+
+    QtObject {
+        id: priv
+        property string buffer: ''
+
+        Component.onCompleted: buffer = input.text
+    }
+
     contentItem: QGrid {
+        rightPadding: 6
+        leftPadding: 6
+        spacing: 2
+
         Label {
             id: label
-            opacity: 0.7
-            rightPadding: 6
-            leftPadding: 6
+            rightPadding: 3
             height: parent.height
             font: Fonts.subscript
         }
-        GridSeparator { color: control.palette.button; opacity: 0.5 }
+
+        GridSeparator {
+            color: control.palette.button
+            thickness: 1
+            opacity: 0.5
+        }
+
         TextField {
             id: input
-            rightPadding: 6
+            padding: 0
+            width: parent.width - 20 - label.width - (actionRow.width * actionRow.visible)
+
             opacity: activeFocus ? 1.0 : 0.7
-            width: parent.width - label.width - buttons.width
+
+            font: Fonts.regular
             height: parent.height
-            font: Fonts.mono
-            selectionColor: palette.windowText
-            selectedTextColor: palette.window
+
             selectByMouse: true
-            background: Item {}
+            background: null
+
+            color: palette.text
+            selectionColor: palette.button
+            selectedTextColor: palette.light
+
+            onAccepted: control.accepted(text);
 
             // This element prevents the text field from having its drag event stolen by the parent.
             DragHandler { target: null }
         }
-        GridSeparator { color: control.palette.button; opacity: 0.5; visible: buttons.visible }
+
+        GridSeparator {
+            color: control.palette.button
+            visible: actionRow.visible
+            opacity: 0.5
+        }
+
         QGrid {
-            id: buttons
-            spacing: 2
-            leftPadding: 4; rightPadding: 4
+            id: actionRow
+            spacing: 4
             height: parent.height
 
-            flow: Grid.LeftToRight
+            visible: input.text !== priv.buffer
             verticalItemAlignment: Grid.AlignVCenter
 
-            visible: false
-
-            ToolButton {
-                height: parent.height
+            ToolBtn {
                 text: '\ue000'
-                visible: parent.visible
-                palette.buttonText: control.palette.button
-                font: Qomponent.font(Fonts.icon, {pointSize: 9})
-                onClicked: control.cancel()
+                palette.buttonText: control.palette.text
+                onClicked: {
+                    input.text = priv.buffer;
+                    control.canceled();
+                }
             }
 
-            ToolButton {
-                height: parent.height
+            ToolBtn {
                 text: '\ue008'
-                font: Qomponent.font(Fonts.icon, {pointSize: 9})
-                visible: parent.visible
-                onClicked: control.accept(input.text)
+                onClicked: {
+                    priv.buffer = input.text;
+                    control.accepted(input.text);
+                }
             }
         }
     }

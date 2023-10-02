@@ -3,13 +3,13 @@
 	url = https://github.com/bricke/Qt-AES
 [submodule "cardian/third-parties/qomponent"]
 	path = cardian/third-parties/qomponent
-	url = https://github.com/SMR76/qomponent
+	url = https://github.com/0smr/qomponent
 [submodule "extra/icon-font/icon-manager"]
 	path = extra/icon-font/icon-manager
-	url = https://github.com/SMR76/icon-manager.git
+	url = https://github.com/0smr/icon-manager.git
 [submodule "cardian/third-parties/hive"]
 	path = cardian/third-parties/hive
-	url = https://github.com/SMR76/hive.git
+	url = https://github.com/0smr/hive.git
 [submodule "cardian/third-parties/veqtor"]
 	path = cardian/third-parties/veqtor
-	url = https://github.com/SMR76/veqtor.git
+	url = https://github.com/0smr/veqtor.git

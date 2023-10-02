@@ -15,7 +15,7 @@
         <file>resources/mapgl/dark-style.json</file>
     </qresource>
     <qresource prefix="/cardian">
-        <file>scripts/utils.js</file>
+        <file>scripts/utils.mjs</file>
         <file>windows/BaseWindow.qml</file>
         <file>globals/Theme.qml</file>
         <file>globals/Config.qml</file>
@@ -51,13 +51,15 @@
         <file>qmldir</file>
         <file>controls/CarView.qml</file>
         <file>controls/MapSystem.qml</file>
-        <file>controls/Range.qml</file>
-        <file>controls/LineSeries.qml</file>
         <file>subpages/statuses/BatteryStatus.qml</file>
         <file>subpages/statuses/FuelStatus.qml</file>
         <file>subpages/statuses/DoorsStatus.qml</file>
         <file>subpages/statuses/SeatsStatus.qml</file>
         <file>subpages/statuses/LightsStatus.qml</file>
         <file>controls/EventItem.qml</file>
+        <file>controls/RangeLineSeries.qml</file>
+        <file>controls/MapBounduryList.qml</file>
+        <file>controls/MapActions.qml</file>
+        <file>controls/MapDragPolygon.qml</file>
     </qresource>
 </RCC>

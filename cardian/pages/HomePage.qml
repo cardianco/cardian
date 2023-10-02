@@ -1,68 +1,100 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
 
 import Hive 1.0
 import Qomponent 0.1
 import cardian 0.1
 
+import cardian.core 0.1
+
 BasePage {
-    id: form
+    id: page
 
     property real bwidth: 65
-    component Gap: Item { width: 65/2; height: 1 }
 
-    contentData: Item {
-        width: form.width
-        height: form.height
+    component ActionButton: TriStateButton {
+        property RequestHandler request: RequestHandler {}
+        property var command: undefined
+        property bool active: false
 
+        clip: true
+        font: Fonts.btnicon
+        state: request.running ? 2 : active
+        onClicked: {
+            if(!request.running && command) {
+                var cmd = {
+                    query :'mutation{sendCommand(value:"' + JSON.stringify(command).replace(/"/g,'\\"') + '",fieldId:1)}'
+                }
+                var res = request.postRequest(Config.api, JSON.stringify(cmd), {stoken: Config.token});
+                console.info('command:', JSON.stringify(command))
+            }
+        }
+
+        Binding { target: Config; property: 'processing'; value: request.running }
+    }
+
+    contentItem: Item {
         CarView {
             id: carview
             x: (parent.width - width)/2
-            width: 250; height: 350
-            strokeWidth: 1.5
+
+            width: 250; height: Math.min(page.height - actions.height - 60, 500)
+            strokeWidth: 2
+
+            doors: Status.doors.times(35)
+            frontLights: Status.frontLights
+
             source: 'qrc:/resources/images/mazda-6-2019.svg'
         }
 
         QGrid {
+            id: actions
+
             x: (parent.width - width)/2
             y: parent.height - height
-            width: actions.width
 
+            width: childrenRect.width
             vertical: true
 
-            Gap { height: 45 }
-
             QGrid {
-                id: actions
-
                 vertical: true
-                spacing: -form.bwidth/2 + 5
+                spacing: -page.bwidth/2 + 5
 
                 Row {
-//                    layoutDirection: Qt.RightToLeft
-                    TriStateButton {
-                        font: Fonts.icon
-                        text: '\ue033'
-                    } Gap {}
-                    TriStateButton {
-                        font: Fonts.icon
-                        text: '\ue090'
-                    } Gap {}
-                    TriStateButton {
-                        font: Fonts.icon
-                        text: '\ue063'
+                    spacing: bwidth/2
+
+                    ActionButton {
+                        active: Status.engine
+                        text: active ? '\ue031' : '\ue033'
+                        command: {'bluetooth': !active}
+                    }
+
+                    ActionButton {
+                        active: Status.engine
+                        text: active ? '\ue090' : '\ue091'
+                        command: {'engine': !active}
+                    }
+
+                    ActionButton {
+                        active: Status.doors.x
+                        text: active ? '\ue063' : '\ue061'
+                        command: {'doors': Array(4).fill(Number(!active))}
                     }
                 }
 
                 Row {
-                    TriStateButton {
-                        font: Fonts.icon
-                        text: '\ue173'
-                    } Gap {}
-                    TriStateButton {
-                        font: Fonts.icon
-                        text: '\ue037'
+                    spacing: bwidth/2
+
+                    ActionButton {
+                        active: Status.frontLights.x
+                        text: active ? '\ue170' : '\ue173'
+                        command: {'front-lights': Array(2).fill(Number(!active))}
+                    }
+
+                    ActionButton {
+                        active: Status.alarm
+                        text: active ? '\ue036' : '\ue037'
+                        command: {'alarm': !active}
                     }
                 }
             }

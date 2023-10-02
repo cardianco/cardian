@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 
 import cardian 0.1
 import veqtor 0.1
@@ -10,19 +9,15 @@ Expandable {
     title: qsTr('seats')
     icon.text: '\ue178'
 
-    expandHeight: contentHeight + implicitFooterHeight + implicitHeaderHeight
-
-    contentData: Column {
-        padding: 5
-        topPadding: 15
-        spacing: 10
-        visible: control.height > 50
+    contentItem: Item {
+        visible: 50 < control.height
+        implicitHeight: childrenRect.height + 20
 
         Veqtor {
             x: (control.availableWidth - width)/2
             width: 160; height: 130
 
-            rotation: 90
+//            rotation: 90
             src: 'qrc:/resources/images/seats.svg'
 
             onSvgLoaded: {

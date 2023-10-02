@@ -12,7 +12,6 @@ BasePage {
     property real itemswidth: 65
     oriention: width > height ? Qt.Horizontal : Qt.Vertical
 
-    component Gap: Item { width: 65/2; height: 1 }
     component SemiHexagon: Item {
         width: page.itemswidth; height: width/2 - 6
         clip: true
@@ -64,8 +63,9 @@ BasePage {
 
         Item { height: 1; width: parent.width }
         Row {
+            spacing: itemswidth/2
             HexagonButton { // Configuration
-                font: Fonts.icon
+                font: Fonts.btnicon
                 text: '\ue01c'
 
                 onClicked: {
@@ -73,20 +73,22 @@ BasePage {
                         stackView.replace(extraPage);
                     }
                 }
-            } Gap {}
+            }
+
             HexagonButton { // Home
-                font: Fonts.icon
-                text: '\ue161'
+                font: Fonts.btnicon
+                text: '\ue160'
 
                 onClicked: {
                     if(homePage.StackView.status !== StackView.Active) {
                         stackView.replace(homePage);
                     }
                 }
-            } Gap {}
+            }
+
             HexagonButton { // Navigation
-                font: Fonts.icon
-                text: '\ue07c'
+                font: Fonts.btnicon
+                text: '\ue079'
 
                 onClicked: {
                     if(navigationPage.StackView.status !== StackView.Active) {
@@ -96,7 +98,11 @@ BasePage {
             }
         }
 
-        Row { SemiHexagon {} Gap {} SemiHexagon {} }
+        Row {
+            spacing: itemswidth/2
+            SemiHexagon {}
+            SemiHexagon {}
+        }
     }
 
     Navigation {

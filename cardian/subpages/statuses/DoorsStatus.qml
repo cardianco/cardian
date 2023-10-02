@@ -12,45 +12,22 @@ Expandable {
     icon.text: '\ue17e'
 
     // TODO: replace this with real door statuses
-    desc.text: doorsStatus(internals.doorsInt)
-    expandHeight: 200
+    desc.text: JsUtils.doorsStatus(doors)
 
     property real angle: 0
-    property vector4d doors
+    property vector4d doors: Status.doors
+
+    Binding { target: Status; property: 'doors'; value: doors }
 
     Behavior on angle {SpringAnimation{spring: 2; damping: 0.2}}
-//    Behavior on doors.x {NumberAnimation{}}
-//    Behavior on doors.y {NumberAnimation{}}
-//    Behavior on doors.z {NumberAnimation{}}
-//    Behavior on doors.w {NumberAnimation{}}
-
-    /**
-     * @abstract This function determines the status of car doors and returns a corresponding message.
-     * @param doors {vector4d}, doors status
-     *   x|y
-     *   z|w
-     */
-    function doorsStatus(doors) {
-        const count = doors.x + doors.y + doors.z + doors.w;
-        let front = '', rear = '';
-
-        if(doors.x ^ doors.y) front += 'front ' + (doors.x ? 'left' : 'right');
-        else if(doors.x) front += 'Both front';
-        if(doors.z ^ doors.w) rear += 'rear ' + (doors.z ? 'left' : 'right');
-        else if(doors.z) rear += 'both rear';
-
-        return !count ? 'All doors are closed' :
-                count === 4 ? 'All doors are open' :
-                count === 1 ? `Only ${front || rear} door is open` :
-                front && rear ? `${front} and ${rear} doors are open` : `${front || rear} doors are open`;
-    }
+    Behavior on doors.x {NumberAnimation{}}
+    Behavior on doors.y {NumberAnimation{}}
+    Behavior on doors.z {NumberAnimation{}}
+    Behavior on doors.w {NumberAnimation{}}
 
     QtObject {
         id: internals
 
-        property vector4d doorsInt: {
-            return Qt.vector4d(...Object.values(doors).map(v => Math.floor(v)))
-        }
         readonly property var doorsConfig: [
             {id:'frontLeft' , org: Qt.point(90 ,340), angle: (doors.x *  35)},
             {id:'frontRight', org: Qt.point(355,340), angle: (doors.y * -35)},
@@ -59,12 +36,15 @@ Expandable {
         ];
     }
 
-    contentData: Item {
-        visible: control.height > 50
+    contentItem: Item {
+        visible: 50 < control.height
+        implicitHeight: childrenRect.height
 
         Row {
             spacing: 5
             ToolButton {
+                enabled: false /// Warning: This line is temporary.
+
                 property bool doorSt: Object.values(doors).some(v => v);
                 text: doorSt ? '\ue063' : '\ue061'
                 onClicked: doors = doorSt ? Qt.vector4d(0,0,0,0) : Qt.vector4d(1,1,1,1)
@@ -77,18 +57,20 @@ Expandable {
         }
 
         Grid {
-            y: 60; x: (control.availableWidth - width)/2
+            y: 65; x: (control.availableWidth - width)/2
             spacing: 5; columns: 2
             rotation: -angle
 
             Repeater {
                 model: ['x','y','z','w']
                 ToolButton {
+                    enabled: false /// Warning: This line is temporary.
+
                     property bool doorSt: doors[modelData]
                     rotation: angle
                     text: doorSt ? '\ue063' : '\ue061'
-                    palette.buttonText: doorSt ? control.palette.base : '#aa50d160'
-                    font: QQ.Qomponent.font(Fonts.icon, {pointSize: 16})
+                    palette.buttonText: enabled && doorSt ? control.palette.base : '#aa50d160'
+                    font: QQ.Qomponent.font(Fonts.btnicon, {pixelSize: 19})
                     onPressed: doors[modelData] = !doorSt
                 }
             }

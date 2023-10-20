@@ -13,3 +13,9 @@
 [submodule "cardian/third-parties/veqtor"]
 	path = cardian/third-parties/veqtor
 	url = https://github.com/0smr/veqtor.git
+[submodule "cardian/third-parties/qtkeychain"]
+	path = cardian/third-parties/qtkeychain
+	url = https://github.com/frankosterfeld/qtkeychain.git
+[submodule "cardian/third-parties/sort-filter-proxy-model"]
+	path = cardian/third-parties/sort-filter-proxy-model
+	url = https://github.com/oKcerG/SortFilterProxyModel.git

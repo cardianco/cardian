@@ -56,13 +56,13 @@
 % ------------- font setup -------------
 % ------------- xepersian --------------
 %% \settextfont{Microsoft Sans Serif}
-\settextfont		[ExternalLocation=fonts/]{Yas}
-\setlatintextfont	[ExternalLocation=fonts/]{Times New Roman}
-\setmathdigitfont	[ExternalLocation=fonts/]{Yas}
-
-\defpersianfont\XBT	[Scale=1.1,ExternalLocation=fonts/]{XB Titre}
-\deflatinfont\FS	[Scale=16,ExternalLocation=fonts/]{Far.Symbol8}
-\deflatinfont\TNR	[Scale=1,ExternalLocation=fonts/]{Times New Roman}
+\settextfont		{Yas}
+\setmathdigitfont	{Yas}
+\setlatintextfont	{Arial}
+\defpersianfont\XBT	[Scale=1.1]{XB Titre}
+\deflatinfont\FS	[Scale=16]{Far.Symbol8}
+\deflatinfont\TNR	[Scale=1]{Arial}
+\deflatinfont\CNSLS	[Scale=1]{Consolas}
 
 % --------------   xcolor  -------------
 \definecolor{ao}{rgb}			{0.00, 0.50, 0.00}
@@ -127,11 +127,41 @@
 	\EndAccSupp{}%
 }
 
+\renewcommand{\today}{۲۷ مهر ۱۴۰۲}
+\renewcommand{\DTMtoday}{19 October, 2023}
+
 
 \begin{document}
+	\definecolor{jkey}{rgb}{0.13, 0.55, 0.13}
+	\definecolor{jnumber}{rgb}{0.78, 0.39, 0.0}
+
+	\lstdefinelanguage{graphql}{
+		keywords={ID, Boolean, Int, Float, Command, Field, Query, State, Boundary, input, LatestStatus, String, User, Session, DeviceType},
+		keywordstyle=\color{blue}\bfseries,
+		identifierstyle=\color{black},
+		sensitive=false,
+		comment=[l]{//},
+		morecomment=[s]{/*}{*/},
+		morestring=[b]',
+		morestring=[b]"
+	}
+
+	\lstdefinelanguage{qml}{
+		keywords={id, typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+		keywordstyle=\color{blue}\bfseries,
+		ndkeywords={property, float, int, bool, class, export, boolean, throw, implements, import, this},
+		ndkeywordstyle=\color{darkgray}\bfseries,
+		identifierstyle=\color{black},
+		sensitive=false,
+		comment=[l]{//},
+		morecomment=[s]{/*}{*/},
+		morestring=[b]',
+		morestring=[b]"
+	}
+
 	\lstset{
 		frame		=	tb,
-		basicstyle	=	\color{steelBlue}\linespread{0.8}\ttfamily,
+		basicstyle	=	\color{steelBlue}\linespread{0.8}\CNSLS,
 		columns		=	fullflexible,
 		keepspaces	=	false,
 		tabsize		=	3,
@@ -162,8 +192,10 @@
 	\vspace*{10cm}\newpage\thispagestyle{empty}\vspace*{10cm}\newpage
 
 	\title{
-		\includegraphics[width=0.5\textwidth]{resources/quct-logo.pdf}\\[8ex]
-		\XBT
+		\includegraphics[width=0.5\textwidth]{images/quct-logo.pdf}\\[10mm]
+		\XBT\normalsize
+			پروژهٔ کارشناسی \\[5mm]
+			\Large
 			سیستم دزدگیر خودرو \\
             \lr{Cardian}
 	}
@@ -175,6 +207,7 @@
 	}
 	\date{
 		\XBT
+		\normalsize
 		\today
 	}
 
@@ -204,11 +237,11 @@
 
 	معمولاً این نوع دستگاه‌ها به منظور فقط کاربرد هشدار دادن استفاده می‌شود، اما از طرفی سهولت استفاده از خودرو نیز مد نظر طراحان این نوع دستگاه قرار دارد.
 
-	دزدگیر‌های خودرو به نوعی از عصر ورود ماشین‌ها به بازار آمدند، یک دزدگیر در دو نوع کارخانه و پس از فروش بر روی خودرو متصل می‌شوند.
+	دزدگیر‌های خودرو به نوعی از عصر ورود خودروها به بازار آمدند، یک دزدگیر در دو نوع کارخانه و پس از فروش بر روی خودرو متصل می‌شوند.
 
 	در حالت کارخانه عموماً امکانات ساده‌ای مانند هشدار در صورت ضربه و بازکردن درها قرار دارد.
 
-	در نوع دیگر که به صورت جدا و معمولاً به صورت محصول شرکتی مستقل بر روی ماشین متصل می‌شود که امکانات بسیار بیشتری نسبت به انواع کارخانه‌ای دزدگیر دارد.
+	در نوع دیگر که به صورت جدا و معمولاً به صورت محصول شرکتی مستقل بر روی خودرو متصل می‌شود که امکانات بسیار بیشتری نسبت به انواع کارخانه‌ای دزدگیر دارد.
 
 	این پروژه شامل بخش زیادی از پیاده سازی این امکانات در کنار استفاده از تراشه‌های ارزان قیمت در محصول نهایی است.
 
@@ -270,7 +303,7 @@
 		\footnotesize
 		\begin{subfigure}[t]{0.3\linewidth}
 			\centering
-			\includegraphics[width=0.8\textwidth]{resources/viper_5906V_1.jpg}
+			\includegraphics[width=0.8\textwidth]{images/viper_5906V_1.jpg}
 			\caption{
 				دستگاه
 				\lr{remote control}
@@ -281,7 +314,7 @@
 		\hspace*{1cm}
 		\begin{subfigure}[t]{0.3\linewidth}
 			\centering
-			\includegraphics[width=0.8\textwidth]{resources/viper_5906V_2.jpg}
+			\includegraphics[width=0.8\textwidth]{images/viper_5906V_2.jpg}
 			\caption{
 				دستگاه 	به صورت
 				\lr{unbox}
@@ -292,7 +325,7 @@
 		\\\vspace*{5mm}%% ----------------------------------------------------------------------
 		\begin{subfigure}[t]{0.3\linewidth}
 			\centering
-			\includegraphics[width=0.8\textwidth]{resources/viper_smart_start_1.jpg}
+			\includegraphics[width=0.8\textwidth]{images/viper_smart_start_1.jpg}
 			\caption{
 				صفحه نمایش موقعیت مکانی خودرو.
 			}
@@ -301,7 +334,7 @@
 		\hspace*{1cm}
 		\begin{subfigure}[t]{0.3\linewidth}
 			\centering
-			\includegraphics[width=0.8\textwidth]{resources/viper_smart_start_2.jpg}
+			\includegraphics[width=0.8\textwidth]{images/viper_smart_start_2.jpg}
 			\caption{
 				صفحه مربوط به تنظیمات هشدار با توجه به موقعیت مکانی.
 			}
@@ -393,7 +426,7 @@
 
 	\begin{figure}[!h]
 		\begin{center}
-			\includegraphics[width=0.4\textwidth]{resources/Python_5760P.jpg}
+			\includegraphics[width=0.4\textwidth]{images/Python_5760P.jpg}
 			\caption{
 			ریموت
 			\lr{Python 5760P}}
@@ -450,11 +483,11 @@
 	خریداری شود، که یک ماه استفاده اولیه رایگان است.
 
 	همچنین این محصول دارای
-	tag
+	\lr{tag}
 	هایی برای باز شدن قفل خودرو در صورت ورود به محدوده خودرو است.
 
 	که این
-	tag
+	\lr{tag}
 	ها نیز به صورت جداگانه در فروشگاه
 	\hyperref{https://www.amazon.com/CARLOCK-TAG-Accessory-ONLY-Automatically/dp/B075F4SWZ7}{car alarm}{carlocktag}{\lr{amazon}}
 	به قیمت
@@ -462,15 +495,13 @@
 	به فروش می‌رسند.
 	\cite{carAlarm:online}
 
-	\hyperref[subfig2:fig2:subsec3:sec3:chap1]{
-	شکل
-	۱.۳}
+	\hyperref[subfig2:fig2:subsec3:sec3:chap1]{شکل 	۱.۳}
 	\begin{figure}[!h]
 		\centering
 		\footnotesize
 		\begin{subfigure}[t]{0.3\linewidth}
 			\centering
-			\includegraphics[width=0.8\textwidth]{resources/carlock-main-module.jpeg}
+			\includegraphics[width=0.8\textwidth]{images/carlock-main-module.jpeg}
 			\caption{
 				ماژول اصلی
 				carlock.
@@ -480,7 +511,7 @@
 		\hspace*{1cm}
 		\begin{subfigure}[t]{0.3\linewidth}
 			\centering
-			\includegraphics[width=0.8\textwidth]{resources/carlock-tag.jpeg}
+			\includegraphics[width=0.8\textwidth]{images/carlock-tag.jpeg}
 			\caption{
 				\lr{carlock tag}
 			برای باز شدن خودکار خودرو.
@@ -489,7 +520,7 @@
 		\end{subfigure}\\
 		\begin{subfigure}[t]{0.8\linewidth}
 			\centering
-			\includegraphics[width=0.93\textwidth]{resources/carlock-tag-functionality.jpg}
+			\includegraphics[width=0.93\textwidth]{images/carlock-tag-functionality.jpg}
 			\caption{
 				نحوهٔ عملکرد
 				\lr{carlock tag}
@@ -500,9 +531,9 @@
 
 		\begin{subfigure}[t]{0.8\linewidth}
 			\centering
-			\includegraphics[width=0.3\textwidth]{resources/carlock-app-ui-1.jpeg}
-			\includegraphics[width=0.3\textwidth]{resources/carlock-app-ui-2.jpeg}
-			\includegraphics[width=0.3\textwidth]{resources/carlock-app-ui-3.jpeg}
+			\includegraphics[width=0.3\textwidth]{images/carlock-app-ui-1.jpeg}
+			\includegraphics[width=0.3\textwidth]{images/carlock-app-ui-2.jpeg}
+			\includegraphics[width=0.3\textwidth]{images/carlock-app-ui-3.jpeg}
 			\caption{
 				نمایی از صفحات نرم‌افزار
 				\lr{carlock}
@@ -561,7 +592,7 @@
 			کنترل ماژول اصلی به وسیله
 			\lr{remote controller}.
 
-			که شامل روشن‌کردن موقت ماشین، بازکردن درها و شیشه‌ها، هشدار اعلان ماشین و ... می‌باشد.
+			که شامل روشن‌کردن موقت خودرو، بازکردن درها و شیشه‌ها، هشدار اعلان خودرو و ... می‌باشد.
 		\item
 			اعمال پیشگیری از سرقت خودرو (مانند به صدا در آمدن هشدار و...)، که شامل امکانات ابتدایی در دزدگیر است.
 		\item
@@ -611,7 +642,7 @@
 		به عنوان زبان طراحی رابط کاربری و
 		\lr{C++}
 		برای سمت پردازش نرم‌افزار یک خروجی مناسب با رابط کاربری قابل پسند و کارایی مناسب ایجاد کند.
-	\subsection{QML}\label{subsec2:sec5:chap1}
+	\subsection{\lr{QML}}\label{subsec2:sec5:chap1}
 	زبان
 	\lr{QML}
 	که از طرف شرکت
@@ -623,7 +654,7 @@
 	\lr{CSS}\LTRfootnote{ Cascading Style Sheet\TNR\ /kaˈskād stīl SHēt/.}
 	در کد می‌توان به راحتی و با استفاده از این زبان یک رابط کاربری مناسب و زیبا ایجاد کرد.
 	\cite{QtQML51548:online}
-	\subsection{ARM}\label{subsec3:sec5:chap1}
+	\subsection{\lr{ARM}}\label{subsec3:sec5:chap1}
 	\lr{ARM}\LTRfootnote{Acorn RISC Machine\TNR\ /ˈeɪˌkɔrn ˈrɪsk məˈʃiːn/ }
 	یک پردازنده کامپیوتری از خانواده
 	\lr{RISC}\LTRfootnote{Reduced Instruction Set Computing\TNR\ /rɪˈdjuːst ɪnˈstrʌkʃn̩ set kəmˈpjuːtɪŋ/.}
@@ -698,177 +729,38 @@
 	برای طراحی مدار نیز نرم‌افزار
 	\lr{Altium Designer}
 	مد نظر قرار گرفته شده‌است که محیط مناسب برای طراحی حرفه‌ای مدار را فراهم می‌کند.
-
-
-	\opchapter{
-		تحلیل پروژه
-	}\label{chap2}
-
-	\section{
-		مقدمه
-	}\label{sec1:chap2}
-
-
-	\section{
-		متدولوژی کنبان
-	}\label{sec2:chap2}
-	\lr{kanban}
-	\footnote{کَنبان.}
-	یک روش مدیریت چرخهٔ کار برای تعریف، مدیریت و بهبود سرویس‌های انتقال دانش کار است.
-	که هدف آن کمک برای متصور سازی، افزایش بهره‌وری و بهبود متداوم کار می‌باشد.
-
-	کنبان در زبان ژاپنی به معنی
-	\emph{
-	تختهٔ بصری
- 	}
-	 و یا
- 	\emph{
- 	علامت
- 	}
-	است.
-	در ابتدا به عنوان یک سیستم برنامه‌ریزی به عنوان مدیریت ناب
-	\LTRfootnote{lean manufacturing \TNR\ /ˈli:n ˌmænjʊˈfæktʃərɪŋ/}
-	در سال
-	$1940$
-	توسط
-	\lr{Toyota}\footnote{
-		تویوتا، یک ‌شرکت خودروسازی ژاپنی تأسیس شده در سال
-		$1935$.
-	}
-	مطرح شد، که از سیستم همزمان
-	\lr{Toyota}
-	الهام گرفته شد، که بعد‌ها در سال
-	$2007$
-	به عنوان روش کنبان پدید آمد.
-	\cite{ohno1988toyota:book}
-	در متدولوژی کنبان از یک تخته کنبان استفاده می‌شود. 	در حالت ساده این تخته شامل $3$ ستون انجام دادن
-	(\lr{To-Do})،
-	در حال انجام
-	(\lr{In Progress})
-	و انجام شده
-	(\lr{Done})
-	است، که ممکن است شامل ستون‌های بانک اطلاعاتی
-	(\lr{Backlog})،
-	آماده انجام
-	(\lr{Ready})،
-	کد زنی
-	(\lr{Coding})،
-	آزمایش
-	(\lr{Testing})،
-	و تأ‌یید
-	(\lr{Approval})
-	نیز باشد.
-	\cite{kanbanize:online}
-
-	\emph{
-	کنبان برای یک
-	}\LTRfootnote{Kanban For 1.}،
-	یک روش الهام گرفته شده از کنبان مناسب برای توسعهٔ پروژه‌هایی با یک توسعه‌دهنده است.
-	\cite{prsonalkanban:online}
-	\begin{figure}[!h]
-		\begin{center}
-			\includegraphics[width=0.8\textwidth]{resources/kanban-board.pdf}
-		\end{center}
-		\caption{
-			نمونهٔ تختهٔ کنبان در پروژهٔ جاری.
-		}
-		\label{fig3:sec1:chap2}
-	\end{figure}
-
-	\section{
-		نمودار کاربرد
-	}\label{sec3:chap2}
-
-	\section{
-		نمودار فعالیت
-	}\label{sec4:chap2}
-	نمودار فعالیت شامل عملکرد کاربر و طریقه انجام مراحل و گزینه‌های موجود پیش روی است.
-	این نمودار خلاصه‌ای از عملیات‌های موجود و قابل انجام توسط دستگاه را توضیح می‌دهد.
-
-	\begin{figure}[!h]
-		\begin{center}
-			\includegraphics[width=0.8\textwidth]{../sd-diagrams/uml/activity-diagram.pdf}
-			%../Extera/SD Diagrams/UML/activity-diagram.pdf
-		\end{center}
-		\caption{
-		نمودار فعالیت.
-		}
-		\label{fig4:sec1:chap1}
-	\end{figure}
+	\pagebreak
+	\input{chapter2.tex}
 
 	\pagebreak
-	\section{
-		نمودار مدل و نشانه‌گذاری فرایند کسب‌وکار
-	}\label{sec5:chap2}
+	\input{chapter3.tex}
 
-%	\subsection{
-%
-%	}\label{subsec1:sec5:chap2}
+	\pagebreak
+	\input{chapter4.tex}
 
-	\begin{figure}[!ht]
-		\centering
-		\footnotesize
-		\begin{subfigure}[t]{0.47\linewidth}
-			\centering
-			\includegraphics[width=\textwidth]{../sd-diagrams/uml/bpmn-diagram-1.pdf}
-			\caption{
-			فعال‌سازی آژیر خودرو
-			}
-			\label{subfig1:fig5:sec5:chap2}
-		\end{subfigure}
-		\begin{subfigure}[t]{0.47\linewidth}
-			\centering
-			\includegraphics[width=\textwidth]{../sd-diagrams/uml/bpmn-diagram-2.pdf}
-			\caption{
-				مراحل کنترل از راه‌دور  خودرو
-			}
-			\label{subfig2:fig5:sec5:chap2}
-		\end{subfigure}
-		\hspace*{1cm}
-		\normalsize
-		\label{fig5:sec5:chap2}
-		\caption{
-			نمودار
-			\lr{BPMN}
-			بخش
-			$2$
-		}
-	\end{figure}
+	\pagebreak
+	\input{chapter5.tex}
 
-	\begin{figure}[!ht]
-		\centering
-		\footnotesize
-		\begin{subfigure}[t]{0.47\linewidth}
-			\centering
-			\includegraphics[width=\textwidth]{../sd-diagrams/uml/bpmn-diagram-3.pdf}
-			\caption{
-				قرار دادن محدودیت منطقه‌ای برای خودرو
-			}
-			\label{subfig1:fig6:sec5:chap2}
-		\end{subfigure}
-		\begin{subfigure}[t]{0.47\linewidth}
-			\centering
-			\includegraphics[width=\textwidth]{../sd-diagrams/uml/bpmn-diagram-4.pdf}
-			\caption{
-				به‌روزرسانی برنامهٔ
-				\lr{desktop}
-			}
-			\label{subfig2:fig6:sec5:chap2}
-		\end{subfigure}
-		\hspace*{1cm}
-		\normalsize
-		\label{fig6:sec5:chap2}
-		\caption{
-			نمودار
-			\lr{BPMN}
-			بخش
-			$1$
-		}
-	\end{figure}
-%	\section{
-%		مدل روابط موجودیت‌ها
-%	}\label{sec6:chap2}
+	\pagebreak
+	\input{chapter6.tex}
 
+	\chapter*{نتیجه گیری}\label{result:chap0}
+	\addcontentsline{toc}{chapter}{نتیجه گیری}
+
+	ساخت دزدگیر خودرو کاری چالش برانگیز است، که مهارت بالایی در طراحی سخت‌افزار و نرم‌افزار را می‌طلبد.
+	در هر حال هر روزه چالش‌های امنیت خودرو در حال افزایش است، که وضعیت را برای شرکت‌های ساخت دزدگیر سخت‌تر می‌کند.
+
+	چالش‌های فعلی مانند حمله‌های تکرار و یا اختلال بر روزی دزدگیر که با روش‌هایی مانند پرش و تغییر فرکانس قابل جلوگیری هستند.
+
+	از این‌رو ساخت و ایجاد یک دزدگیر نیازمند دقت بالا و بروز بودن برای جلوگیری از حملات احتمالی نیاز است.
+
+	در این پروژه نیز سعی شده تا این موارد حین پیروی از استانداردها و استفاده از روش‌های مرسوم،  بهترین خروجی ممکن ارائه شود.
+	اما پیاده‌سازی امکانات فراتر و بیشتر نیازمند زمان و هزینه است.
+
+	در صورت تولید اجزاء این پروژه در تعداد بالا امکان کاهش قیمت تولید این محصول برای ورود به بازار است، با اینحال نیز در بازار شرکت‌های مشابه نیز در حال تلاش برای کاهش هزینه و افزایش کیفیت ساخت هستند.
+
+	همچنین در حال حاضر با ظهور مدل‌های زبان طبیعی بزرگ \lr{LLM}، می‌توان به عنوان یک فرصت برای استفاده از این تکنولوژی در این پروژه نیز فکر کرد.
+%	\section{name}\label{sec6:chap2}
 %	\begin{enumerate}[nosep]\label{enum‍1:sec0:chap0}
 %		\item
 %	\end{enumerate}
@@ -911,10 +803,29 @@
 %		\caption{group caption}
 %	\end{figure}
 
-	%\chapter*{نتیجه گیری}\label{result:chap0}
-	%\addcontentsline{toc}{chapter}{نتیجه گیری}
-
 	\nocite{*}
 	\bibliographystyle{unsrt-fa}
 	\bibliography{reference}
+
+	\newpage
+	\begin{latin}
+		\thispagestyle{empty}
+		\centering
+		\vspace*{5cm}
+		\TNR
+		\includegraphics[width=0.5\textwidth]{images/quct-logo.en.pdf}\\[8ex]
+		\vspace*{5mm}
+		\Large
+		\textbf{B.S. Final Project}\\
+		\vspace*{5mm}
+		\Large
+		\textbf{Car Alarm System}\\
+		Cardian\\
+		\vspace*{13mm}
+		\large
+		\textbf{Seyyed Morteza Razavi}\\
+		\textbf{Dr. Mahdi Sadeghizadeh}\\
+		\vspace*{5mm}
+		\DTMtoday
+	\end{latin}
 \end{document}

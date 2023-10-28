@@ -13,7 +13,7 @@ pdftk diagrams.pdf burst output d%02d.pdf compress || exit 2
 rm diagrams.pdf
 rm doc_data.txt
 # Naming table for diagrams.
-mv d01.pdf "usecase-diagram.pdf"
+mv d01.pdf "project-structure.pdf"
 mv d02.pdf "activity-diagram.pdf"
 mv d03.pdf "bpmn-diagram-1.pdf"
 mv d04.pdf "bpmn-diagram-2.pdf"

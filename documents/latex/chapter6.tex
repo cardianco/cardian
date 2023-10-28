@@ -1,0 +1,874 @@
+\opchapter{پیوست‌ها}
+
+این فصل شامل بخشی از کد‌های نوشته شده به همراه توضیحاتی از آن‌ها است.
+مطابق توضیحات در فصل‌های قبلی، پروژه شامل سه بخش بوده که در مجموع از ۶ تا ۷ زبان برنامه‌نویسی مجزا تشکیل شده.
+سعی بر اینست که هر بخش به صورت شفاف توضیح داده شود.
+\section{نرم‌افزار}
+\subsection{درخواست \lr{Post} کلاس \lr{C++}}
+فایل اصلی:
+\hyperref{https://github.com/cardianco/cardian/blob/master/cardian/requesthandler.h}{}{}{\lrm{cardian/requesthandler.h}}
+
+مورد استفاده: ‌ارسال درخواست‌های \lr{post}.
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=C++, caption={C++ Request Handler Component}]
+		/// Implementation details of the main code.
+		class requestHandler : public QObject {
+			Q_OBJECT
+			QML_NAMED_ELEMENT(RequestHandler)
+			QML_ADDED_IN_MINOR_VERSION(1)
+		public:
+			Q_INVOKABLE int postRequest(const QUrl &url, const QByteArray &body, const QVariantMap &extraHeads = QVariantMap(), int timeout = DefaultTransferTimeoutConstant) {
+				QNetworkRequest req(url);
+				req.setTransferTimeout(timeout);
+				req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+				for(const auto &head: core::QKVRange(extraHeads)) {
+					req.setRawHeader(head.first.toLatin1(), extraHeads[head.first].toByteArray());
+				}
+
+				QNetworkReply *reply = mNetworkManager.post(req, body);
+				mRequestHash[reply].id = ++mNum;
+
+				emit runningChanged();
+
+				QObject::connect(reply, &QNetworkReply::readyRead, this, &requestHandler::onReadyRead);
+				QObject::connect(reply, &QNetworkReply::finished, this, &requestHandler::onFinished);
+				QObject::connect(reply, &QNetworkReply::errorOccurred, this, &requestHandler::onErrorOccurred);
+
+				return mNum;
+			}
+
+		private:
+			QNetworkAccessManager mNetworkManager;
+			QHash<QNetworkReply *, replyData> mRequestHash; // The container used for holding each request
+			int mNum; /// This is only for counting requests.
+		};
+	\end{lstlisting}
+\end{latin}
+
+\subsection{کلاس \lr{secureKeyChain}}
+مورد استفاده: ذخیرهٔ ایمن \lr{token}های کاربر توسط در \lr{keychain}.
+
+آدرس فایل:
+\hyperref{https://github.com/cardianco/cardian/blob/master/cardian/securekeychain.h}{}{}{\lrm{cardian/securekeychain.h}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=C++, caption={C++ KeyChain Component}]
+		/// Implementation details of the main code.
+		class secureKeyChain: public QObject, public QQmlParserStatus {
+			Q_OBJECT
+			Q_PROPERTY(QVariantMap cache READ cache NOTIFY cacheChanged FINAL)
+
+			QML_NAMED_ELEMENT(SecureKeyChain)
+			QML_ADDED_IN_MINOR_VERSION(1)
+		public:
+   			QVariant readKey(const QString &key) {
+				if(mCache.contains(key)) return mCache[key];
+
+				credentialReader *reader = new credentialReader(service, this);
+				connect(reader, &credentialReader::finished, this, &secureKeyChain::readerFinished);
+
+				reader->setKey(key);
+				reader->setAutoDelete(true);
+				reader->start();
+
+				return QVariant{}; /// Return undefined
+			}
+		private:
+			QVariantMap mCache;
+		};
+	\end{lstlisting}
+\end{latin}
+
+\subsection{کلاس \lr{ٰVeqtor}}
+مورد استفاده: کلاس پایهٔ استفاده شده برای نمایش و رسم شکل‌ها و چارت‌ها.
+
+آدرس فایل:
+\hyperref{https://github.com/0smr/veqtor/veqtor.h}{}{}{\lrm{cardian/third-parties/veqtor/veqtor.h}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=C++, caption={C++ ٰVeqtor Root Class}]
+		/// Implementation details of the main code.
+		class veqtor : public QNanoQuickItem {
+			Q_OBJECT
+			QML_NAMED_ELEMENT(Veqtor)
+			QML_ADDED_IN_MINOR_VERSION(1)
+
+			Q_PROPERTY(QString src READ src WRITE setSrc NOTIFY srcChanged)
+			Q_PROPERTY(QVariantMap document READ document NOTIFY documentChanged)
+			Q_PROPERTY(QObject* root READ root NOTIFY rootChanged)
+			Q_PROPERTY(QSizeF sourceSize READ sourceSize CONSTANT)
+		public:
+			veqtor(QQuickItem *parent = nullptr);
+			QNanoQuickItemPainter *createItemPainter() const override final;
+
+			void hoverMoveEvent(QHoverEvent* event) override;
+
+			void componentComplete() override;
+			void painter(QNanoPainter *painter) const;
+
+			QPointer<elements::svg> root() { return mRoot; }
+
+			QString src() const { return mSrc; }
+			void setSrc(const QString& src);
+
+			QVariantMap document() const { return mDocument; }
+
+			Q_INVOKABLE QVariant getElementById(const QString &id) { return mDocument[id]; }
+
+			QSizeF sourceSize() const { return mSourceSize; }
+
+		private slots:
+			void setElementsToProperties();
+			void adjustSize();
+			void adjustResponsive();
+			void updateDocument(const QString &newId, const QString &oldId);
+			void updateElementAttributes();
+
+		public slots:
+			void update();
+
+		signals:
+			void srcChanged();
+			void rootChanged();
+			void documentChanged();
+			void svgLoaded();
+			void hovered(QPointer<elements::element> target);
+
+		private:
+			QPointer<elements::svg> mRoot;
+			QVariantMap mDocument;
+			QString mSrc;
+			QSizeF mSourceSize;
+
+			QTimer mUpdateTimer;
+			QTransform mAdjustment;
+		};
+	\end{lstlisting}
+\end{latin}
+
+\subsection{فایل \lr{Statuses}}
+مورد استفاده: نگهداری، و دریافت داده‌ها از سرور.
+
+آدرس فایل:
+\hyperref{https://github.com/cardianco/cardian/blob/master/cardian/globals/Status.qml}{}{}{\lrm{cardian/globals/Status.qml}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=qml, caption={Global Status Component}]
+		/// Implementation details of the main code.
+  		RequestHandler {
+			id: requestHandler
+			property var responses: Object();
+
+			function graphAPI(body) {
+				// Config.api == https://cardianWebsite/graphQL.php
+				// Config.token == <64 byte hex string> == SHA256
+				return postRequest(Config.api, JSON.stringify(body), {stoken: Config.token})
+			}
+
+			onErrorOccurred: /* Handling errors */;
+			onFinished: function(data, id) {
+				if(typeof responses[id].callback == 'function') {
+					const args = responses[id].args ?? [];
+					responses[id].callback(data, ...args);
+					delete responses[id];
+				}
+			}
+		}
+
+		function fetchStatuses() {
+			const limit = 100, start = events.first() ?? {};
+			const body = { query: `query{statusHistory(limit:${limit},start:${start.id ?? -1}){id fieldType{id name} data utc}}` };
+			const id = requestHandler.graphAPI(body);
+
+			reqHndlr.responses[id] = {
+				callback: result => {
+					const history = JsUtils.parseJson(result, {}).qget('data.statusHistory', []);
+					if(history) {
+						history.forEach(record => {
+							const {id, fieldType, data, utc} = record;
+							/// Here, `events` refers to an object instance of `EventModel`.
+							events.append(id, fieldType.name, data, utc, fieldType.id);
+						});
+					}
+				}
+			};
+		}
+	\end{lstlisting}
+\end{latin}
+
+
+\subsection{صفحهٔ پیمایش}
+مورد استفاده: بخشی از کد صفحهٔ‌ پیمایش نرم‌افزار.
+
+آدرس فایل:
+\hyperref{https://github.com/cardianco/cardian/blob/master/cardian/pages/NavigationPage.qml}{}{}{\lrm{cardian/pages/NavigationPage.qml}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=qml, caption={Navigation Page}]
+		/// Implementation details of the main code.
+		RouteModel {
+			id: routeModel
+
+			autoUpdate: true
+			query: routeQuery
+
+			plugin: Plugin {
+				name: "mapbox"
+				/// `control.token` here refered as mapboxGL access token.
+				PluginParameter { name: "mapbox.access_token"; value: control.token }
+			}
+		}
+
+		RouteQuery { id: routeQuery }
+
+		contentItem: Map {
+			id: map
+
+			opacity: 1.0
+			zoomLevel: 14
+			copyrightsVisible: false
+			center: QtPositioning.coordinate(36.3162, 59.5408) // Mashhad (Default location, clould also be Tehran)
+			color: "transparent"
+			gesture.enabled: !dragPoly.dragging
+
+			plugin: Plugin {
+				name: 'mapboxgl'
+				locales: ['en_US' ,'fa_IR']
+				preferred: ["mapboxgl", 'osm', "mapbox"]
+
+				PluginParameter {
+					name: 'mapboxgl.access_token'
+					value: control.token
+				}
+
+				PluginParameter {
+					name: 'mapboxgl.mapping.cache.memory'
+					value: false
+				}
+
+				PluginParameter {
+					name: 'mapboxgl.mapping.additional_style_urls'
+					value: 'qrc:/resources/mapgl/dark-style.json'
+				}
+			}
+
+			TapHandler {
+				id: tapInserter
+				grabPermissions: TapHandler.ApprovesTakeOverByAnything
+				onTapped: event => {
+					const {longitude, latitude} = map.toCoordinate(event.position);
+					const {i} = JsUtils.findNearestPoint(Qt.vector2d(longitude, latitude), activePolygon);
+					activePolygon.insert(i, {longitude, latitude});
+				}
+			}
+
+			MapItemView {
+				model: routeModel
+
+				delegate: MapRoute {
+					route: model.routeData
+					line.color: "#aaF5478D"
+					line.width: map.zoomLevel > 5 ? map.zoomLevel/2.8 : 0
+					smooth: true
+					opacity: index ? 0.3 : 1.0
+				}
+			}
+
+			MapItemView {
+				model: polygons
+
+				delegate: MapItemGroup {
+					required property int index
+					required property var poly
+
+					MapPolygon {
+						opacity: 0.3
+						color: index === Config.selectedMap ? control.palette.text : control.palette.highlight
+						border.color: control.palette.window
+						border.width: 1
+
+						path: Array(poly.count).fill().map((_, i) => poly.get(i));
+					}
+
+					MapQuickItem {
+						anchorPoint.x: sourceItem.width/2
+						anchorPoint.y: sourceItem.height/2
+						coordinate: {
+							const {y, x} = JsUtils.polygonCenter(poly);
+							return QtPositioning.coordinate(y, x);
+						}
+						sourceItem: Label {
+							text: index + 1; font: Fonts.head
+							color: control.palette.buttonText
+							opacity: 0.6
+						}
+					}
+				}
+			}
+
+			/// Dragable polygons on navigation page
+			MapDragPolygon { /* Commented out */ }
+
+			MapQuickItem {
+				coordinate: control.currentUserLocation ?? QtPositioning.coordinate()
+				anchorPoint{x: 7.5; y: 7.5}
+				sourceItem: Rectangle { /* Commented out */ }
+			}
+
+			MapQuickItem {
+				coordinate: control.currentCarLocation ?? QtPositioning.coordinate()
+				anchorPoint{x: sourceItem.width / 2; y: sourceItem.height / 2}
+				sourceItem: SomeIcon { /* Commented out */ }
+			}
+
+			Shortcut { /// Shortcuts key for desktop outputs.
+				enabled: map.zoomLevel < map.maximumZoomLevel
+				sequence: StandardKey.ZoomIn
+				onActivated: map.zoomLevel = Math.round(map.zoomLevel + 1);
+			}
+
+			Shortcut {
+				enabled: map.zoomLevel > map.minimumZoomLevel
+				sequence: StandardKey.ZoomOut
+				onActivated: map.zoomLevel = Math.round(map.zoomLevel - 1);
+			}
+		}
+	\end{lstlisting}
+\end{latin}
+
+% ------------------
+\subsection{.}
+مورد استفاده: بخش تنظیمات پیشرفته.
+شامل نمایش و کنترل دقیق‌تر اجزاء خودرو.
+
+آدرس فایل:
+\hyperref{https://github.com/cardianco/cardian/blob/master/cardian/pages/ExtraPage.qml}{}{}{\lrm{cardian/pages/ExtraPage.qml}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=qml, caption={ExtraPage.qml}]
+		/// Implementation details of the main code.
+		BasePage {
+			id: page
+			title: swipeview.currentItem.title
+
+			contentItem: Column {
+				padding: 5
+				topPadding: 35
+
+				TabBar {
+					id: tabbar
+					x: (parent.width - width)/2
+					currentIndex: swipeview.currentIndex
+
+					Repeater {
+						model: ["Advanced", "Configuration", "Events"]
+						TabButton { /* Commented out */ }
+					}
+				}
+
+				SwipeView {
+					id: swipeview
+
+					width: page.width - 2 * parent.padding
+					height: page.height - y - 10
+
+					topPadding: 10
+					clip: true
+
+					spacing: parent.padding * 2
+					currentIndex: tabbar.currentIndex
+
+					Advanced {
+						oriention: page.oriention
+						title: "Advanced Controls"
+					}
+
+					Configuration {
+						oriention: page.oriention
+						title: "Configuration"
+					}
+
+					Events {
+						oriention: page.oriention
+						title: "Commands Events"
+					}
+				}
+			}
+		}
+	\end{lstlisting}
+\end{latin}
+
+\section{سرور و \lr{API}}
+
+\subsection{\lr{Schema}}
+تعریف طرح دادهٔ \lr{GraphQl}
+در این بخش نوع داده‌های مورد استفاده در پرس‌وجوی \lr{GraphQL} استفاده شده‌اند تعریف شده است.
+
+آدرس فایل:
+\hyperref{https://github.com/cardianco/cardian-server/blob/master/src/api/graphql/schema.graphql}{}{}{\lrm{cardian-server/src/api/graphql/schema.graphql}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=graphql, caption={GraphQL Schema.}]
+		/// Implementation details of the graphQL schema.
+		type Mutation {
+			newStatus(fieldId: ID!, value: String!): ID
+			...
+		}
+
+		type Query {
+			fields: [Field]
+			states: [State]
+			deviceTypes: [DeviceType]
+
+			user: User
+			session: Session
+			sessions: [Session!]
+			latestStatus: LatestStatus!
+			statusHistory(limit: Int! = 1, start: Int = -1, accessed: Boolean = null): [Status!]
+			commandHistory(limit: Int! = 1, start: Int = -1, accessed: Boolean = null): [Command!]
+
+			/// An example definition of type is provided below.
+			boundaries(start: Int! = -1): [Boundary!]
+		}
+
+		/// Input type
+		input PointInput {
+			x: Float!
+			y: Float!
+		}
+
+		type Point {
+			x: Float!
+			y: Float!
+		}
+
+		type Boundary {
+			id: ID!
+			session: Session!
+			state: State!
+			poly: [Point!] // The `Point` type was defined before.
+			utc: Int!
+		}
+		/// ...
+	\end{lstlisting}
+\end{latin}
+
+\subsection{\lr{Resolver}}
+نمونهٔ خلاصه شده از کلاس \lr{resolver}، این کلاس یک پیاده‌سازی برای استفاده در کتاب‌خانهٔ \lr{webonyx/grapql} است.
+که نحوهٔ عملکرد برای هر درخواست در آن مشخص شده‌است.
+
+آدرس فایل:
+\hyperref{https://github.com/cardianco/cardian-server/blob/master/src/api/graphql/resolver.graphql}{}{}{\lrm{cardian-server/src/api/graphql/resolver.graphql}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=php, caption={Rsolver Class}]
+		/// Implementation details of the main code.
+		class resolver {
+			static public function values(database $db) {
+				$typeResolvers = [
+					'Session' => /* Implementations are commented out */ ,
+					'LatestStatus' => /* Implementations are commented out */,
+					'User' => function($values, $args, $ctx, $inf) use ($db) { /* Commented out */ },
+					'Field' => fn($values, $args, $ctx, $inf) =>  $db->getFields($values['fid'] ?? null),
+					'State' => fn($values, $args, $ctx, $inf) =>  $db->getStates($values['stid'] ?? null),
+					'DeviceType' => fn($values, $args, $ctx, $inf) =>  $db->getDeviceType($values['tid'] ?? null),
+					'UserInfo' => fn($values, $args, $ctx, $inf) =>  $db->getUserInfo($values['id'])
+				];
+
+				$rootResolvers = [
+					'fields' => $typeResolvers['Field'],
+					'states' => $typeResolvers['State'],
+					'deviceTypes' => $typeResolvers['DeviceType'],
+
+					'user' => $typeResolvers['User'],
+					'session' => $typeResolvers['Session'],
+					'latestStatus' => $typeResolvers['LatestStatus'],
+					'sessions' => function($root, $args, $ctx, $inf) use ($db) { /* Commented out */  },
+					'statusHistory' => function($root, $args, $ctx, $inf) use ($db) { /* Commented out */  },
+					'commandHistory' => function($root, $args, $ctx, $inf) use ($db) { /* Commented out */  },
+					'boundaries' => function($root, $args, $ctx, $inf) use ($db) {
+						$start = $args['start']; /// Start index
+						$bndry = $db->getBoundariesByUser($root['uid'], $start);
+
+						foreach($bndry as &$b) $b['session'] = $root['Session'];
+						foreach($bndry as &$b) $b['state'] = $root['State'];
+
+						return $bndry;
+					}
+				];
+
+				$mutations = [
+					'newStatus' => function($root, $args, $ctx, $inf) use ($db) {
+						[$fid, $value] = [$args['fieldId'], $args['value']];
+						$field = $db->getFieldsPair()[$fid] ?? "json";
+
+						$jsonString = json_encode([$field => json_decode($value)]);
+
+						$db->updateLatestStatus($root['uid'], $jsonString);
+						return $db->addStatus($root['sid'], $fid, $jsonString);
+					},
+					/* Other mutations are Commented out */
+				];
+
+				return array_merge($typeResolvers, $rootResolvers, $mutations);
+			}
+		}
+	\end{lstlisting}
+\end{latin}
+
+\section{سخت‌افزار}
+بخش سخت‌افزار شامل کتابخانه‌هایی می‌شوند که برای هرچه آسان‌تر بکارگیری ماژول‌های سخت‌افزاری طراحی شده‌اند.
+که شامل کتابخانه‌های هستهٔ‌ برنامه مانند: \lr{attachable} و \lr{timer} هستند.
+\begin{itemize}[nosep]
+	\item \lr{attachable}،
+	این کلاس در عمل نقش یک \lr{event loop} را دارد.
+	بدین صورت که با تابع
+	\begin{latin}
+		\small
+		\begin{lstlisting}[language=c++]
+			on(const std::string \&, const std::function<void(const std::vector<std::any>\&));
+		\end{lstlisting}
+	\end{latin}
+	می‌توان یک رخداد ایجاد کرد. \newline
+	برای مثال برای
+	\lrm{on("event-name", [](auto) { /* works to-do */ })}
+	در صورت، فراخوانی تابع
+	\lrm{emit("event-name");}
+	تابع تعریف متصل شده توسط تابع
+	\lrm{on}
+	فراخوانی می‌شوند.
+	\item \lr{timer}
+	کلاس \lr{timer}،‌ که با وجود تابع
+	\begin{latin}
+		\small
+		\begin{lstlisting}[language=c++]
+			void timer::every(const std::function<void(void));
+		\end{lstlisting}
+	\end{latin}
+	می‌توان یک تابع را در زمان مشخص شده فراخوانی کرد.
+\end{itemize}
+
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{images/timer-instructure.pdf}
+	\end{center}
+	\caption{نمایش ساختار عملکرد \lr{timer}.}
+	\label{fig1:chap6}
+\end{figure}
+
+\subsection{کلاس \lr{attachable}}
+کلاس \lr{attachable} برای استفاده عنوان کلاس پایه، ارث‌بری شده در توسط کلاس‌های
+\lr{serial}،
+\lr{sim800}،
+\lr{neo6m}،
+\lr{hmtrp}،
+\lr{serial}.
+
+آدرس فایل:
+\hyperref{https://github.com/cardianco/cardian-hardware/blob/master/main/utils/attachable.h}{}{}{\lrm{cardian-hardware/hardware/main/utils/attachable.h}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=c++, caption={Attachable class implementation}]
+		/// Implementation details of the main code.
+		using _any_list = std::vector<_any>;
+		using _callback = std::function<void(const _any_list&)>;
+
+		struct event {
+			enum Type {Default, Once, Exclusive};
+			Type type = Type::Default;
+			_callback func;
+		};
+
+		class attachable {
+			public:
+			void emit(const fmt &name, const _any_list &args = {}) {
+				if(mEvents.count(name)) {
+					std::vector<event> &elist = mEvents[name];
+
+					for(event &e: elist) {
+						std::invoke(e.func, args);
+						if(e.type == event::Exclusive) break;
+					}
+
+					if(elist.size() && elist.front().type == event::Exclusive) {
+						elist.erase(elist.begin());
+					} else {
+						auto last = std::remove_if(elist.begin(), elist.end(), [](event &e){
+							return e.type == event::Once;
+						});
+						elist.resize(std::distance(elist.begin(), last));
+					}
+				}
+			}
+
+			void on(const fmt &name, const _callback &func, event::Type type = event::Default) {
+				std::vector<event> &elist = mEvents[name];
+				if(type == event::Exclusive) {
+					auto iter = std::find_if(elist.begin(), elist.end(), [](event &e){ return e.type != event::Exclusive; });
+					elist.insert(iter, { type, func });
+				} else {
+					elist.push_back({ type, func });
+				}
+			}
+
+			void clear(const fmt &name) {
+				mEvents[name].clear();
+			}
+
+			attachable& then(const _callback &func) {
+				on("then", func, event::Exclusive);
+				return *this;
+			}
+
+			attachable& fail(const _callback &func) {
+				on("fail", func, event::Exclusive);
+				return *this;
+			}
+
+			size_t count() const { return mEvents.size(); }
+
+			static void _NONE(const _any_list&) {}
+
+			private:
+			std::map<fmt, std::vector<event>> mEvents;
+		};
+
+		inline static attachable _attachable;
+	\end{lstlisting}
+\end{latin}
+
+\subsection{کلاس \lr{sim800l}}
+کلاس \lr{sim800} برای استفاده از ماژول
+\lr{SIM800L}
+یک یک کلاس ارث‌بری شده از \lr{attachable} است و قابلیت اجرای دستورات را برپایهٔ رخداد و غیر همزمان ارائه می‌کند.
+
+آدرس فایل:
+\hyperref{https://github.com/cardianco/cardian-hardware/blob/master/main/utils/sim800.h}{}{}{\lrm{cardian-hardware/hardware/main/utils/sim800.h}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=c++, caption={}]
+		/// Implementation details of the main code.
+		class sim800l final: protected core::attachable {
+		public:
+			sim800l() {
+				mSerial1.setTimeout(1000);
+				mcu::timer::repeat(10, std::bind(&core::serial1::eventLoop, &mSerial1));
+
+				mSerial1.onReadyRead([this](auto) {
+					response res{};
+
+					fmt value = mSerial1.read();
+
+					value = value.tolower();
+
+					/// Reading all lines...
+
+					if(value.includes("ok")) { res.type = response::OK; }
+					else if(value.includes("error")) { res.type = response::ERROR; } else if(value.includes("call ready") || value.includes("sms ready")) { res.type = response::STATUS; }
+					else { res.type = response::OK; }
+					res.data = value;
+
+					if(mResponses.isFull()) mResponses.remove(res);
+					mResponses.insert(res);
+
+					emit("response", {res});
+				});
+			}
+
+			inline void onResponse(const core::_callback &cb, core::event::Type type = core::event::Once) {
+				on("response", cb, type);
+			}
+
+			core::attachable& run(fmt command = "at") {
+				mSerial1.print(command + "\r\n");
+
+				static core::attachable _a;
+
+				onResponse([](const core::_any_list &args){
+					auto res = args[0].cast<response>().value();
+
+					if(res.type == response::OK) {
+						_a.emit("then", {res.data});
+					} else {
+						_a.emit("fail", {res.data});
+					}
+				});
+
+				return _a;
+			}
+
+			void call(std::string pn) { run(fmt("ATD{0};").arg(pn)); }
+			void endCall() { run("ATH"); }
+			void sms(const std::string &phoneNumber, const std::string &message) {
+				run("AT+CMGF=1")
+				.then([this, &phoneNumber, &message](auto) {
+					run(fmt(R"(AT+CMGS="{0}"\n{1}\x1a)").arg(phoneNumber).arg(message));
+				});
+			}
+
+			void reset() {
+				run("AT+CFUN=0").then([this](auto) {
+					mcu::timer::once(30000, [this] {
+						/// o: OK
+						run("AT+CFUN=1");
+					});
+				});
+			}
+
+			void getCCID() { run("AT+CCID"); }
+			void checkPin() { run("AT+CPIN?"); }
+			void checkRegistration() { run("AT+CREG?"); }
+			void checkGprsConnection() { run("AT+CGATT?");
+			void detachGprs() { run("AT+CGATT=0"); }
+			void checkHttpStatus() { run("AT+HTTPSTATUS?"); }
+			void checkPhoneState() { run("AT+CPAS"); }
+			void checkSignal() { run("AT+CSQ"); }
+			void checkRoaming() { run("AT+CROAMING"); }
+
+			void enableTcp() {
+				run(R"(AT+CSTT="mtnirancell","","")").then([this](auto) {
+					run("AT+CIICR");
+				});
+			}
+
+		    void sendTcpData(const std::string &base, const std::string &url, const std::string &content, const std::string &rheader) {
+				fmt post =
+					"POST {1} HTTP/1.0\n"
+					"HOST: {0}\n"
+					"Content-type: application/json\n"
+					"Content-length: {2}\n{3}\n{4}\n";
+
+				post.arg(base).arg(url).arg(content.length()).arg(rheader).arg(content);
+
+				run(fmt(R"(AT+CIPSTART="TCP","{0}",80)").arg(base)).then([this, &post](auto) {
+					run("AT+CIPSEND=" + std::to_string(post.length()));
+				});
+			}
+		};
+	\end{lstlisting}
+\end{latin}
+
+\subsection{کلاس \lr{utils}}
+کلاس
+\lr{utils}
+برخی از ابزارهای مورد نیاز برای راه‌اندازی \lr{STM32}، مانند تنظیم \lr{PLL} و \lr{RTC} و همچنین تابع \lr{delay}.
+در این بین تابع \lr{delay} کمی متفاوت‌تر از توابع موجود پیاده‌سازی شده، بدین صورت که در صورت وجود مقدار مکث بیشتر از
+$10$
+ثانیه، پردازنده به خواب رفته و یک \lr{timer} برای خارج کردن پردازنده از خواب شروع می‌شود.
+بدین جهت که در مکث‌های بیشتر از یک یا دو دقیقه مصرف انرژی کمتری توسط پردازنده مصرف شود.
+
+آدرس فایل:
+\hyperref{https://github.com/cardianco/cardian-hardware/blob/master/main/mcu/mcu.h}{}{}{\lrm{cardian-hardware/hardware/main/mcu/mcu.h}}
+\begin{latin}
+	\small
+	\begin{lstlisting}[language=c++, caption={MCU tool functions}]
+		/// Implementation details of the main code.
+		struct utils final {
+			inline static uint64_t utc = 0;
+
+			static void init() { NVIC_SetPriorityGrouping(4); }
+
+			static inline void setupHSI() {
+				RCC->CR |= RCC_CR_HSION;
+				while(!(RCC->CR & RCC_CR_HSIRDY));
+				RCC->CFGR &= ~RCC_CFGR_SW;
+				while((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI);
+			}
+
+			static inline void pllHsiTo32mhz() {
+				RCC->CR &= ~RCC_CR_PLLON;
+				while(RCC->CR & RCC_CR_PLLRDY);
+				RCC->CFGR &= ~RCC_CFGR_PLLMULL;
+				RCC->CFGR |= RCC_CFGR_PLLMULL8;
+
+				RCC->CR |= RCC_CR_PLLON;
+				while(!(RCC->CR & RCC_CR_PLLRDY));
+				RCC->CFGR &= ~RCC_CFGR_SW;
+				RCC->CFGR |= RCC_CFGR_SW_PLL;
+				while((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL);
+
+				SystemCoreClockUpdate();
+			}
+
+			static void delay(uint32_t ms = UINT32_MAX) {
+				if(ms < 5000) {
+					__disable_irq();
+
+					RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+					TIM4->PSC = SystemCoreClock/1000;
+					TIM4->EGR |= TIM_EGR_UG;
+					TIM4->CNT = 0;
+					TIM4->ARR = UINT32_MAX;
+					TIM4->CR1 |= TIM_CR1_CEN;
+
+					while(TIM4->CNT < ms) __asm("nop");
+
+					__enable_irq();
+				} else {
+					TIM4->CR1 &= ~(TIM_CR1_CEN);
+					RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+
+					NVIC_SetPriority(TIM4_IRQn, 0);
+					NVIC_EnableIRQ(TIM4_IRQn);
+
+					TIM4->PSC = SystemCoreClock/1000;
+					TIM4->EGR |= TIM_EGR_UG;
+					TIM4->ARR = ms;
+
+					TIM4->DIER |= TIM_DIER_UIE;
+					TIM4->CR1 |= TIM_CR1_CEN;
+
+					__WFI();
+
+					NVIC_DisableIRQ(TIM4_IRQn);
+					RCC->APB1ENR &= ~RCC_APB1ENR_TIM4EN;
+				}
+			}
+
+			static uint32_t timxNum(TIM_TypeDef *timx) {
+				return (timx == TIM1) * 0x1 | (timx == TIM2) * 0x2 |
+				(timx == TIM3) * 0x3 | (timx == TIM4) * 0x4;
+			}
+
+			template <uint32_t num = 1, bool interrupt = false>
+			static void timxInit() {
+				static_assert( 1 <= num && num <= 4, "Timer number should be between 1 and 4");
+				timxInit(num - 1, interrupt);
+			}
+
+			static void timxInit(uint32_t idx, bool interrupt = false) {
+				IRQn_Type timx_irqn[4] = {TIM1_UP_IRQn, TIM2_IRQn, TIM3_IRQn, TIM4_IRQn};
+				TIM_TypeDef* timx[4] = {TIM1, TIM2, TIM3, TIM4};
+				uint32_t timx_en[4] = {RCC_APB2ENR_TIM1EN, RCC_APB1ENR_TIM2EN, RCC_APB1ENR_TIM3EN, RCC_APB1ENR_TIM4EN};
+
+				timx[idx]->CR1 &= ~(TIM_CR1_CEN);
+				if(idx) RCC->APB1ENR |= timx_en[idx];
+				else RCC->APB2ENR |= timx_en[idx];
+
+				NVIC_SetPriority(timx_irqn[idx], idx);
+				NVIC_EnableIRQ(timx_irqn[idx]);
+
+				timx[idx]->PSC = SystemCoreClock/1000;
+				timx[idx]->EGR |= TIM_EGR_UG;
+				timx[idx]->ARR = UINT32_MAX;
+				timx[idx]->DIER |= interrupt ? TIM_DIER_UIE : 0x0UL;
+			}
+
+			void initRtc(void) {
+				RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+				PWR->CR |= PWR_CR_DBP;
+				RCC->BDCR |= RCC_BDCR_RTCEN;
+				RCC->BDCR |= RCC_BDCR_RTCSEL_LSE;
+				RCC->BDCR &= ~RCC_BDCR_RTCSEL_LSI;
+				RCC->BDCR |= RCC_BDCR_LSEON;
+				while(!(RCC->BDCR & RCC_BDCR_LSERDY));
+				RTC->CRL |= RTC_CRL_CNF;
+				RTC->CRH |= RTC_CRH_SECIE;
+				RTC->CRL &= ~RTC_CRL_CNF;
+				NVIC_EnableIRQ(RTC_IRQn);
+			}
+		};
+	\end{lstlisting}
+\end{latin}

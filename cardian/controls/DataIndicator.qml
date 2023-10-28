@@ -107,6 +107,11 @@ Control {
                     width: 12; height: 12
                     running: Config.processing
                 }
+                Label {
+                    visible: 1 < Config.processing
+                    text: Config.processing
+                    font: Fonts.subscript
+                }
                 Item {width: parent.width; height: 1}
             }
 

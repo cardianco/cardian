@@ -99,7 +99,7 @@ Control {
             clone.text: '\ue188'
             remove.text: '\ue18d'
 
-            onCheckedChanged: Config.selectedMap = index;
+            onCheckedChanged: Config.selectedMap = checked ? -1 : index;
             edit.onClicked: control.editClicked(index)
 
             remove.onClicked: {

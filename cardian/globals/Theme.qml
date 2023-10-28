@@ -11,6 +11,7 @@ Item {
     property alias dark: dark.palette
     property alias light: light.palette
     property string active: 'dark'
+    property SystemPalette system: SystemPalette { colorGroup: SystemPalette.Active }
 
     property Item rippleEffectItem: RippleTT {
         width: (parent ?? {}).width

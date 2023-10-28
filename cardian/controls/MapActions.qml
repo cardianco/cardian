@@ -10,10 +10,12 @@ Control {
     id: control
 
     property ToolButton ok: ToolBtn { text: '\ue007' }
-    property ToolButton path: ToolBtn { text: '\ue195'; checkable: true }
-    property ToolButton sync: ToolBtn { text: '\ue00b'; checkable: true }
-    property ToolButton list: ToolBtn { text: '\ue19e'; checkable: true }
+    property ToolButton sync: ToolBtn { text: '\ue00b' }
     property ToolButton cancel: ToolBtn { text: 'x' }
+    property ToolButton path: ToolBtn { text: '\ue195'; checkable: true }
+    property ToolButton list: ToolBtn { text: '\ue19e'; checkable: true }
+
+    property bool syncing: false
 
     component ToolBtn: ToolButton {
         padding: 5
@@ -24,13 +26,13 @@ Control {
             color: Qomponent.alpha(border.color, 0.2)
             border.color: palette.button
             border.width: 1 + parent.checked
-            radius: 3
             opacity: 0.9 + 0.1 * !parent.down
+            radius: 3
         }
     }
 
     NumberAnimation {
-        running: sync.checked
+        running: control.syncing
         target: sync.contentItem
         property: 'rotation'
         duration: 1500; loops: -1

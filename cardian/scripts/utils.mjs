@@ -116,7 +116,7 @@ export function parseStatusData(status) {
     return Object.entries(status).reduce(function(obj, [key, value]) {
         const type = statusType(key);
         const converters = {
-            object: v => v, array: v => Array(v), number: v => Number(v), boolean: v => Boolean(v),
+            object: v => v, array: v => v, number: v => Number(v), boolean: v => Boolean(v),
             point: v => Qt.point(v[0], v[1]), vector2d: v => Qt.vector2d(v[0], v[1]),
             vector4d: v => Qt.vector3d(v[0], v[1], v[2]),
             vector3d: v => Qt.vector4d(v[0], v[1], v[2], v[3]),
@@ -148,4 +148,26 @@ export function doorsStatus({x,y,z,w}) {
             count === 4 ? 'All doors are open' :
             count === 1 ? `Only ${front || rear} door is open` :
             front && rear ? `${front} and ${rear} doors are open` : `${front || rear} doors are open`;
+}
+
+/**
+ * @abstract Recursive function which
+ * @param {Object} obj
+ * @param {*} prefix
+ * @returns
+ */
+export function flattenObject(obj) {
+    const flattened = {};
+
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            if (typeof obj[key] === 'object' && obj[key] !== null) {
+                Object.assign(flattened, flattenObject(obj[key]));
+            } else {
+                flattened[key] = obj[key];
+            }
+        }
+    }
+
+    return flattened;
 }

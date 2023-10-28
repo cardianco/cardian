@@ -20,7 +20,7 @@ BasePage {
             currentIndex: swipeview.currentIndex
 
             Repeater {
-                model: ["Advanced", "Configuration", "History"]
+                model: ["Advanced", "Configuration", "Events"]
                 TabButton {
                     text: modelData
                     width: implicitWidth
@@ -53,7 +53,7 @@ BasePage {
 
             Events {
                 oriention: page.oriention
-                title: "Commands History"
+                title: "Commands Events"
             }
         }
     }

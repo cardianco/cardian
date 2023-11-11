@@ -109,6 +109,11 @@ BasePage {
 
                     width: parent.width
 
+                    /// TODO seprate polygons
+                    syncing: Object.keys(Status.reqHndlr.running).length
+
+                    sync.onClicked: Status.fetchPolygons();
+
                     cancel.visible: mapsystem.activePolygon.count
                     cancel.onClicked: {
                         mapsystem.activePolygon.clear();
@@ -129,8 +134,6 @@ BasePage {
                     }
 
                     list.onCheckedChanged: if(!list.checked) Config.selectedMap = -1;
-
-                    sync.checked: Status.polygon.running
                 }
 
                 MapBounduryList {

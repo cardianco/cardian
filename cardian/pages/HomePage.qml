@@ -19,9 +19,11 @@ BasePage {
 
         clip: true
         font: Fonts.btnicon
-        state: request.running ? 2 : active
+        state: Object.keys(request.running).length ?
+                   TriStateButton.Indeterminate : active
+
         onClicked: {
-            if(!request.running && command) {
+            if(command) {
                 var cmd = {
                     query :'mutation{sendCommand(value:"' + JSON.stringify(command).replace(/"/g,'\\"') + '",fieldId:1)}'
                 }
@@ -30,7 +32,10 @@ BasePage {
             }
         }
 
-        Binding { target: Config; property: 'processing'; value: request.running }
+        Binding {
+            target: Config; property: 'processing';
+            value: Object.keys(request.running).length
+        }
     }
 
     contentItem: Item {
@@ -64,7 +69,7 @@ BasePage {
                     spacing: bwidth/2
 
                     ActionButton {
-                        active: Status.engine
+                        active: Status.bluetooth
                         text: active ? '\ue031' : '\ue033'
                         command: {'bluetooth': !active}
                     }

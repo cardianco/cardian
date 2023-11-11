@@ -30,6 +30,9 @@ documents/latex/fonts
 *.toc
 *.bbl
 *.brf
+*.snm
+*.pdf
+*.nav
 
 *.user
 

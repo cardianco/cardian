@@ -11,130 +11,135 @@
 
 #include <QDir>
 
+#include <unordered_map>
+
+namespace cardian::core {
+/// @ref https://www.kdab.com/qt-range-based-for-loops-and-structured-bindings/
+template <typename T> class QKVRange {
+public:
+    QKVRange(T &data) : mData{data} {}
+    auto begin() { return mData.keyValueBegin(); }
+    auto end() { return mData.keyValueEnd(); }
+
+private:
+    T &mData;
+};
+}
+
 namespace cardian::network {
+struct replyData {
+    uint64_t id;
+    QByteArray data;
+};
+
 class requestHandler : public QObject {
     Q_OBJECT
-    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
-    Q_PROPERTY(Status status READ status NOTIFY statusChanged RESET resetStatus)
+    Q_PROPERTY(QVariantMap running READ running NOTIFY runningChanged FINAL)
+
     QML_NAMED_ELEMENT(RequestHandler)
     QML_ADDED_IN_MINOR_VERSION(1)
 public:
-    enum Status {
-        Error = -1, None, Pending, Running, Completed,
-    };
-    Q_ENUM(Status)
-
     explicit requestHandler(QObject *parent = nullptr)
-        : QObject{parent}, mReply(nullptr), mRunning(false), mStatus(Status::None) {
+        : QObject{parent}, mNum{0} {
         mNetworkManager.setAutoDeleteReplies(true);
     }
 
-    Q_INVOKABLE bool getRequest(const QUrl &url) {
+    Q_INVOKABLE int getRequest(const QUrl &url) {
         /// TODO: Use a QReply list instead of a single QReply object.
         /// QNetworkManager should be able to handle 8 requests at a time.
-        if(mReply && mReply->isRunning()) return false;
 
         QNetworkRequest req(url);
         req.setTransferTimeout(3000);
-        mBuffer.clear();
 
-        setStatus(Status::None);
         req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-        mReply = mNetworkManager.get(req);
-        setStatus(Status::Pending);
+        QNetworkReply *reply = mNetworkManager.get(req);
+        mRequestHash[reply].id = ++mNum;
 
-        QObject::connect(mReply, &QNetworkReply::readyRead, this, &requestHandler::onReadyRead);
-        QObject::connect(mReply, &QNetworkReply::finished, this, &requestHandler::onFinished);
-        QObject::connect(mReply, &QNetworkReply::errorOccurred, this, &requestHandler::onErrorOccurred);
+        QObject::connect(reply, &QNetworkReply::readyRead, this, &requestHandler::onReadyRead);
+        QObject::connect(reply, &QNetworkReply::finished, this, &requestHandler::onFinished);
+        QObject::connect(reply, &QNetworkReply::errorOccurred, this, &requestHandler::onErrorOccurred);
 
-        return true;
+        return mNum;
     }
 
-    Q_INVOKABLE bool postRequest(const QUrl &url, const QByteArray &body,
-                                 const QVariantMap &extraHeads = QVariantMap()) {
+    Q_INVOKABLE int postRequest(const QUrl &url, const QByteArray &body,
+                                 const QVariantMap &extraHeads = QVariantMap(),
+                                 int timeout = QNetworkRequest::DefaultTransferTimeoutConstant) {
         /// TODO: Move to another thread
-        if(mReply && mReply->isRunning()) return false;
-
         QNetworkRequest req(url);
-        req.setTransferTimeout(3000);
-        mBuffer.clear();
-
-        setStatus(Status::None);
+        req.setTransferTimeout(timeout);
         req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-        for(const auto &head: extraHeads.keys()) {
-            req.setRawHeader(head.toLatin1(), extraHeads[head].toByteArray());
+        for(const auto &head: core::QKVRange(extraHeads)) {
+            req.setRawHeader(head.first.toLatin1(), extraHeads[head.first].toByteArray());
         }
 
-        mReply = mNetworkManager.post(req, body);
-        setStatus(Status::Pending);
+        QNetworkReply *reply = mNetworkManager.post(req, body);
+        mRequestHash[reply].id = ++mNum;
 
-        QObject::connect(mReply, &QNetworkReply::readyRead, this, &requestHandler::onReadyRead);
-        QObject::connect(mReply, &QNetworkReply::finished, this, &requestHandler::onFinished);
-        QObject::connect(mReply, &QNetworkReply::errorOccurred, this, &requestHandler::onErrorOccurred);
-
-        return true;
-    }
-
-    bool running() const { return mRunning; }
-    void setRunning(bool arunning) {
-        if (mRunning == arunning) return;
-        mRunning = arunning;
         emit runningChanged();
+
+        QObject::connect(reply, &QNetworkReply::readyRead, this, &requestHandler::onReadyRead);
+        QObject::connect(reply, &QNetworkReply::finished, this, &requestHandler::onFinished);
+        QObject::connect(reply, &QNetworkReply::errorOccurred, this, &requestHandler::onErrorOccurred);
+
+        return mNum;
     }
 
-    const Status& status() const { return mStatus; }
-    void setStatus(const Status& newStatus) {
-        if(mStatus == newStatus) return;
-        mStatus = newStatus;
-        emit statusChanged();
-        setRunning(newStatus == Pending || newStatus == Running);
+    QVariantMap running() const {
+        QVariantMap map;
+
+        for(const auto &reply: core::QKVRange(mRequestHash)) {
+            map[QString::number(reply.second.id)] = reply.first->isRunning();
+        }
+
+        return map;
     }
 
 private slots:
     void onReadyRead() {
-        mBuffer.append(mReply->readAll());
-        setStatus(Status::Running);
+        QNetworkReply *reply = qobject_cast<QNetworkReply *>(QObject::sender());
+        mRequestHash[reply].data.append(reply->readAll());
     }
 
     void onFinished() {
-        mBuffer.append(mReply->readAll());
-        setStatus(Status::Completed);
-        emit finished(mBuffer);
-        mReply = nullptr;
+        QNetworkReply *reply = qobject_cast<QNetworkReply *>(QObject::sender());
+        QByteArray buffer = reply->readAll();
+        mRequestHash[reply].data.append(buffer);
+
+        emit finished(mRequestHash[reply].data, mRequestHash[reply].id);
+        mRequestHash.remove(reply);
+        emit runningChanged();
     }
 
     void onErrorOccurred(QNetworkReply::NetworkError error) {
-        setStatus(Status::Error);
-        emit errorOccurred(QString("Network Error (Code: %1)").arg(error));
+        QNetworkReply *reply = qobject_cast<QNetworkReply *>(QObject::sender());
+
+        emit errorOccurred(QString("Network Error (Code: %1)").arg(error), mRequestHash[reply].id);
+        mRequestHash.remove(reply);
+        emit runningChanged();
     }
 
 public slots:
-    void abort() {
-        if(mReply) mReply->abort();
-        emit aborted();
-        setStatus(Status::None);
-    }
-
-    void resetStatus() {
-        setStatus(Status::None);
+    void abortAll() {
+        for(const auto &reply: core::QKVRange(mRequestHash)) {
+            emit aborted(reply.second.id);
+            reply.first->abort();
+        }
+        mRequestHash.clear();
     }
 
 signals:
     void runningChanged();
-    void statusChanged();
-
-    void errorOccurred(QString errorMessage);
-    void finished(QByteArray response);
-    void aborted();
+    void errorOccurred(QString errorMessage, int id);
+    void finished(QByteArray response, int id);
+    void aborted(int id);
 
 private:
     QNetworkAccessManager mNetworkManager;
-    QNetworkReply *mReply;
-    QByteArray mBuffer;
+    QHash<QNetworkReply *, replyData> mRequestHash;
 
-    bool mRunning;
-    Status mStatus;
+    int mNum;
 };
 }

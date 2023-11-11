@@ -3,15 +3,9 @@ import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import Qt.labs.platform 1.1
 
-import QtPositioning 5.15
-
-import Qomponent 0.1
-import Hive 1.0
-
-import cardian 0.1
+import cardian 0.1 /// JsUtils
 import cardian.core 0.1
-
-import veqtor 0.1
+import Hive 1.0
 
 import 'cardian/controls'
 
@@ -29,24 +23,22 @@ ApplicationWindow {
 
     palette: Theme[Theme.active]
 
-//    contentData: Control { id: control
-//    contentData: Home {
-//    contentData: Extra {
-//    contentData: Navigation {
+    // contentData: Control { id: control
     contentData: Main {
         width: window.width
         height: window.height
     }
 
     Component.onCompleted: {
-        Theme.rippleEffectItem.parent = window.contentItem
-        Theme.rippleEffectItem.source = window.contentItem
+        Theme.rippleEffectItem.parent = window.contentItem;
+        Theme.rippleEffectItem.source = window.contentItem;
     }
 
     SystemTrayIcon {
         id: systemTray
-        // visible: true
-        // icon.source: 'qrc:/resources/icons/icon.svg'
+        visible: Qt.platform.os !== "android"
+        icon.source: 0.5 > Theme.system.text.hslLightness ? 'qrc:/resources/logo-light.svg' :
+                                                      'qrc:/resources/logo-dark.svg'
 
         onActivated: {
             if(reason === SystemTrayIcon.Trigger) {

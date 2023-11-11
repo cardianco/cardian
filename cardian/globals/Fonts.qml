@@ -10,16 +10,15 @@ Control {
     id: control
 
     property font icon: tools.getConfig('icon') ?? Qt.font({family:cardian.name, pixelSize: 14})
-    property font head: tools.getConfig('head') ?? Qt.font({family:carlito.name, pixelSize: 19, bold: true, weight: Font.ExtraBold})
-    property font mono: tools.getConfig('mono') ?? Qt.font({family:courierCode.name, pixelSize: 12})
+    property font head: tools.getConfig('head') ?? Qt.font({family:exo2.name, pixelSize: 19, bold: true, weight: Font.ExtraBold})
+    property font mono: tools.getConfig('mono') ?? Qt.font({family:ubuntu.name, pixelSize: 12})
     property font btnicon: tools.getConfig('btnicon') ?? Qt.font({family:cardian.name, pixelSize: 20})
-    property font regular: tools.getConfig('regular') ?? Qt.font({family:carlito.name, pixelSize: 12})
-    property font subscript: tools.getConfig('subscript') ?? Qt.font({family:carlito.name, pixelSize: 9})
+    property font regular: tools.getConfig('regular') ?? Qt.font({family:exo2.name, pixelSize: 12})
+    property font subscript: tools.getConfig('subscript') ?? Qt.font({family:exo2.name, pixelSize: 9})
 
-    FontLoader { id: courierCode; source: "qrc:/resources/font/Courier Prime Code.ttf" }
+    FontLoader { id: ubuntu; source: "qrc:/resources/font/ubuntu-mono.ttf" }
     FontLoader { id: cardian; source: "qrc:/resources/font/cardian-icons.ttf" }
-    FontLoader { id: carlito; source: "qrc:/resources/font/Carlito-Regular.ttf" }
-    FontLoader { source: "qrc:/resources/font/Carlito-Bold.ttf" }
+    FontLoader { id: exo2; source: "qrc:/resources/font/exo2.ttf" }
 
     QtObject {
         id: tools

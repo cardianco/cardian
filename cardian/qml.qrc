@@ -1,18 +1,18 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>resources/font/Courier Prime Code Italic.ttf</file>
-        <file>resources/font/Courier Prime Code.LICENSE</file>
-        <file>resources/font/Courier Prime Code.ttf</file>
-        <file>resources/font/Carlito-Regular.ttf</file>
-        <file>resources/font/Carlito-Bold.ttf</file>
         <file>resources/font/cardian-icons.ttf</file>
-        <file>resources/font/Carlito.LICENSE</file>
-        <file>resources/images/front-lights.svg</file>
         <file>resources/images/mazda-6-2019.svg</file>
         <file>resources/images/seats.svg</file>
         <file>resources/images/doors.svg</file>
         <file>resources/mapgl/dark-style.json</file>
+        <file>resources/logo.svg</file>
+        <file>resources/font/exo2.ttf</file>
+        <file>resources/font/ubuntu-mono.ttf</file>
+        <file>resources/logo-dark.svg</file>
+        <file>resources/logo-golden.svg</file>
+        <file>resources/logo-light.svg</file>
+        <file>resources/logo.ico</file>
     </qresource>
     <qresource prefix="/cardian">
         <file>scripts/utils.mjs</file>

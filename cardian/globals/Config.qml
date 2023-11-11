@@ -14,12 +14,21 @@ Control {
     id: control
 
     property string api: "http://cardian.ir/graphql.php"
-    property string token: "" // Session token (note: user token can be user's password sha256)
-    property string mapToken: ""
+    // Session token (note: user token can be user's password sha256)
+    property alias token: tokens.session
+    property alias mapToken: tokens.map
     property bool backAnimation
     property bool indicators
     property int selectedMap: -1
     property int processing: 0
+
+    SecureKeyChain {
+        id: tokens
+        property string session: ""
+        property string map: ""
+
+        onError: errorMessage => print(errorMessage);
+    }
 
     Settings {
         category: "Configuration/General"

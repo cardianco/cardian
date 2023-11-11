@@ -36,20 +36,66 @@ Control {
 
     property EventModel events: EventModel {}
     property ListModel polygons: ListModel {
-        onRowsInserted: (_, index) => {if(!priv.fetching) addPolygon(index)};
+        property bool blockInsert: false
+        onRowsInserted: (_, index) => {if(!blockInsert) addPolygon(index)};
         onRowsAboutToBeRemoved: (_, index) => removePolygon(polygons.get(index).id);
         onDataChanged: ({row}) => updatePolygon(index);
     }
 
+    property RequestHandler reqHndlr: RequestHandler {
+        property var responses: Object();
+
+        function graphAPI(body) {
+            return postRequest(Config.api, JSON.stringify(body), {stoken: Config.token})
+        }
+
+        onErrorOccurred: emsg => print('error:', emsg);
+        onFinished: function(data, id) {
+            if(typeof responses[id].callback == 'function') {
+                const args = responses[id].args ?? [];
+                responses[id].callback(data, ...args);
+                delete responses[id];
+            }
+        }
+    }
+
     function fetchLatestStatuses() {
         const body = { query: 'query{latestStatus{data}}' };
-        return latestDataRequest.postRequest(Config.api, JSON.stringify(body), {stoken: Config.token});
+        const id = reqHndlr.graphAPI(body);
+
+        reqHndlr.responses[id] = {
+            callback: result => {
+                const data = JsUtils.parseJson(result, {}).qget('data.latestStatus.data');
+                const statuses = JsUtils.flattenObject(JsUtils.parseJson(data, {}));
+
+                if(statuses) {
+                    const parsed = JsUtils.parseStatusData(statuses);
+                    Object.keys(parsed).forEach(key => {
+                        if(control.hasOwnProperty(key)) {
+                            control[key] = parsed[key];
+                        }
+                    });
+                }
+            }
+        };
     }
 
     function fetchStatuses() {
         const limit = 100, start = events.first() ?? {};
         const body = { query: `query{statusHistory(limit:${limit},start:${start.id ?? -1}){id fieldType{id name} data utc}}` };
-        return historyRequest.postRequest(Config.api, JSON.stringify(body), {stoken: Config.token});
+        const id = reqHndlr.graphAPI(body);
+
+        reqHndlr.responses[id] = {
+            callback: result => {
+                const history = JsUtils.parseJson(result, {}).qget('data.statusHistory', []);
+                if(history) {
+                    history.forEach(record => {
+                        const {id, fieldType, data, utc} = record;
+                        events.append(id, fieldType.name, data, utc, fieldType.id);
+                    });
+                }
+            }
+        };
     }
 
     function updatePolygon(index) {
@@ -58,54 +104,29 @@ Control {
 
         const list = JsUtils.toGQLPoints(JsUtils.polygonToList(poly));
         const body = { query: `mutation{updateBoundary(id: ${id}, stateId:1, poly:[${list}])}` };
-        return polygon.update.postRequest(Config.api, JSON.stringify(body), {stoken: Config.token});
-    }
+        const reqId = reqHndlr.graphAPI(body);
 
-    function addPolygon(index) {
-        polygon.push.index = index;
-        const model = polygons.get(index).poly;
-        const list = JsUtils.toGQLPoints(JsUtils.polygonToList(model));
-
-        const body = { query: `mutation{createBoundary(stateId:1 poly:[${list}])}` };
-        return polygon.push.postRequest(Config.api, JSON.stringify(body), {stoken: Config.token});
-    }
-
-    function removePolygon(index) {
-        if(index === undefined) return;
-        polygon.remove.index = index;
-        const body = { query: `mutation{removeBoundaries(idList: [${index}])}` };
-        return polygon.remove.postRequest(Config.api, JSON.stringify(body), {stoken: Config.token});
-    }
-
-    function fetchPolygons(maxId) {
-        print('start:' , maxId);
-        const body = { query: `query{boundaries(start:${maxId}){id utc state{name} poly{y x}}}` };
-        return polygon.fetch.postRequest(Config.api, JSON.stringify(body), {stoken: Config.token});
-    }
-
-    QtObject {
-        id: priv
-        readonly property var headers: Object({ stoken: Config.token });
-        property bool fetching: false
-    }
-
-    property QtObject polygon: QtObject {
-        property bool running: [fetch, update, push,remove].some(rh => rh.running);
-
-        property RequestHandler update: RequestHandler {
-            /// TODO: Gather all fetchs to one file.
-            onFinished: function(result) {
+        reqHndlr.responses[reqId] = {
+            callback: result => {
                 const json = JsUtils.parseJson(result).data;
                 if(json === undefined) return;
                 const res = json.updateBoundary ?? NaN;
 
                 print(`Updated polygon: ${res}`);
             }
-        }
+        };
+    }
 
-        property RequestHandler push: RequestHandler {
-            property int index: -1
-            onFinished: function(result) {
+    function addPolygon(index) {
+        const model = polygons.get(index).poly;
+        const list = JsUtils.toGQLPoints(JsUtils.polygonToList(model));
+
+        const body = { query: `mutation{createBoundary(stateId:1 poly:[${list}])}` };
+        const id = reqHndlr.graphAPI(body);
+
+        reqHndlr.responses[id] = {
+            args: [index],
+            callback: (result, index) => {
                 if(!result) return;
                 const json = JsUtils.parseJson(result);
                 const id = json.qget('data.createBoundary', NaN);
@@ -113,63 +134,48 @@ Control {
 
                 print(`Added new polygon (id:${id})`);
             }
-        }
+        };
+    }
 
-        property RequestHandler remove: RequestHandler {
-            /// TODO: Gather all fetchs to one file.
-            property int index: -1
-            onFinished: function(result) {
-                if(!result) return;
+    function removePolygon(index) {
+        if(index === undefined) return;
+        const body = { query: `mutation{removeBoundaries(idList: [${index}])}` };
+        const id = reqHndlr.graphAPI(body);
+
+        reqHndlr.responses[id] = {
+            args: [index],
+            callback: (result, index) => {
                 const json = JsUtils.parseJson(result);
-                const res = json.qget('data.removeBoundaries', NaN);
+                const num = json.qget('data.boundaries', null);
 
-                print(`Removed polygon (id:${index}): ${res}`);
+                if(1 <= num) {
+                    print(`Removed polygons (num:${num})`);
+                }
             }
         }
+    }
 
-        property RequestHandler fetch: RequestHandler { /// Fetch data
-            onFinished: function(result) {
+    function fetchPolygons(id = undefined) {
+        const list = Array(polygons.count).fill().map((_,i) => polygons.get(i).id ?? 0);
+        const maxId = id ?? Math.max(...list, -1);
+        const body = { query: `query{boundaries(start:${maxId}){id utc state{name} poly{y x}}}` };
+        const reqId = reqHndlr.graphAPI(body);
+
+        reqHndlr.responses[reqId] = {
+            callback: result => {
                 const json = JsUtils.parseJson(result);
                 if(!json) return;
 
                 const boundaries = json.qget('data.boundaries', []);
 
-                priv.fetching = true;
+                polygons.blockInsert = true;
                 boundaries.forEach(function({id, utc, state, poly}) {
                     const mapPoly = poly.map(p => QtPositioning.coordinate(p.y, p.x));
                     polygons.append({ id, poly: mapPoly, utc, state: state.name ?? '' });
                 });
-                priv.fetching = false;
+                polygons.blockInsert = false;
 
                 print(`Fetched polygons (num:${boundaries.length})`);
-            }
-        }
-    }
-
-    property RequestHandler historyRequest: RequestHandler {
-        onFinished: function(result) {
-            const history = JsUtils.parseJson(result, {}).qget('data.statusHistory', []);
-            if(history) {
-                history.forEach(record => {
-                    const {id, fieldType, data, utc} = record;
-                    events.append(id, fieldType.name, data, utc, fieldType.id);
-                });
-            }
-        }
-    }
-
-    property RequestHandler latestDataRequest: RequestHandler {
-        onFinished: function(result) {
-            const data = JsUtils.parseJson(result, {}).qget('data.latestStatus.data');
-            const statuses = JsUtils.parseJson(data, {});
-
-            if(statuses) {
-                const parsed = JsUtils.parseStatusData(statuses);
-                Object.keys(parsed).forEach(key => {
-                    if(control.hasOwnProperty(key)) {
-                        control[key] = parsed[key];
-                    }
-                });
             }
         }
     }
@@ -180,10 +186,7 @@ Control {
         repeat: true; running: true
         triggeredOnStart: true
         onTriggered: {
-            const list = Array(polygons.count).fill().map((_,i) => polygons.get(i).id ?? 0);
-            const maxId = Math.max(...list, -1);
-
-            fetchPolygons(maxId);
+            fetchPolygons();
             fetchStatuses();
             fetchLatestStatuses();
 
@@ -194,7 +197,7 @@ Control {
     Binding {
         target: Config
         property: 'processing'
-        value: [latestDataRequest, historyRequest, polygon].some(o => o.running)
+        value: Object.keys(reqHndlr.running).length
     }
 
     Settings {
